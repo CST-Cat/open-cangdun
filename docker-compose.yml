@@ -14,3 +14,11 @@ services:
       # - ADMIN_PASSWORD=mypassword
       - TZ=Asia/Shanghai
     restart: unless-stopped
+    networks:
+      - cangdun-net
+
+# 与 cloudflared 容器共享的网络：隧道 ingress 直连 http://cangdun:80
+# （不依赖宿主防火墙；若 cloudflared 容器被重建，执行 docker network connect cangdun-net cloudflared）
+networks:
+  cangdun-net:
+    external: true

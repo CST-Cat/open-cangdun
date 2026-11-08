@@ -106,7 +106,16 @@ docker compose up -d --build
 # 首次账密: docker logs cangdun
 ```
 
-镜像内已完成：数据分片 + Brotli 预压缩 + 字体子集 + 前端构建；运行时为 **Go 静态二进制（scratch 基础镜像，仅二进制+数据，共 48MB）**。手动等价操作：`docker build -t cangdun . && docker run -d -p 37080:80 -v ./cangdun-auth:/config cangdun`。
+镜像内已完成：数据分片 + Brotli 预压缩 + 字体子集 + 前端构建；运行时为 **Go 静态二进制（scratch 基础镜像，仅二进制+数据，共 41.7MB）**。手动等价操作：`docker build -t cangdun . && docker run -d -p 37080:80 -v ./cangdun-auth:/config cangdun`。
+
+### 公网域名（Cloudflare Tunnel）
+
+```bash
+./deploy/cf-map.sh                # 映射到 https://cd.2023989.xyz（幂等，可重跑）
+./deploy/cf-map.sh foo.你的域.xyz  # 或映射到其他 Cloudflare 托管域名
+```
+
+机制（永久，无临时凭据/防火墙规则）：应用与 cloudflared 容器接入同一 docker 网络，隧道 ingress 直连 `http://cangdun:80`；隧道管理用保存在 `~/.config/cloudflare/cangdun-tunnel-token` 的永久 API token（首次运行由 cf CLI 的 OAuth 自动铸造，权限仅 Tunnel Write）。
 
 ### 大题库读取优化
 

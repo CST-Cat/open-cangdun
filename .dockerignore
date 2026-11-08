@@ -1,0 +1,17 @@
+# 镜像不需要的东西
+.git
+.github
+credentials/
+data/
+
+# 应用构建产物与依赖（容器内重新安装/构建/生成）
+app/node_modules
+app/dist
+app/public/data
+app/auth-config
+app/e2e
+
+# 凭据与本地文件
+cangdun-auth/
+*.md
+.DS_Store

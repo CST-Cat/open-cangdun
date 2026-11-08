@@ -1,0 +1,199 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/jetbrains-mono";
+
+/* 裁剪子集字体（scripts/subset-fonts.mjs 按题库 3934 字生成） */
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/inter-var.subset.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Noto Sans SC';
+  src: url('/fonts/noto-sans-sc-var.subset.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@custom-variant dark (&:is(.dark *));
+
+/* Apple DESIGN.md → shadcn tokens
+   primary #0066cc · parchment #f5f5f7 · ink #1d1d1f · hairline #e0e0e0 */
+@theme inline {
+    --font-sans: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont,
+        "SF Pro Text", "PingFang SC", "Microsoft YaHei", "Helvetica Neue",
+        system-ui, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground: var(--foreground);
+    --color-background: var(--background);
+    --color-success: var(--success);
+    --color-success-foreground: var(--success-foreground);
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+    --background: #ffffff;              /* canvas */
+    --foreground: #1d1d1f;              /* ink */
+    --card: #ffffff;
+    --card-foreground: #1d1d1f;
+    --popover: #ffffff;
+    --popover-foreground: #1d1d1f;
+    --primary: #0066cc;                 /* Action Blue */
+    --primary-foreground: #ffffff;
+    --secondary: #f5f5f7;               /* parchment */
+    --secondary-foreground: #1d1d1f;
+    --muted: #f5f5f7;
+    --muted-foreground: #7a7a7a;        /* ink-muted-48 */
+    --accent: #f0f0f0;                  /* divider-soft hover */
+    --accent-foreground: #1d1d1f;
+    --destructive: oklch(0.577 0.245 27.325);
+    --border: #e0e0e0;                  /* hairline */
+    --input: #e0e0e0;
+    --ring: #0071e3;                    /* focus blue */
+    --success: #248a3d;                 /* iOS green for 正确 */
+    --success-foreground: #ffffff;
+    --chart-1: #0066cc;
+    --chart-2: #248a3d;
+    --chart-3: #b25000;
+    --chart-4: #7d4ccb;
+    --chart-5: #7a7a7a;
+    --radius: 1.125rem;                 /* rounded.lg 18px → cards */
+    --sidebar: #f5f5f7;
+    --sidebar-foreground: #1d1d1f;
+    --sidebar-primary: #0066cc;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #f0f0f0;
+    --sidebar-accent-foreground: #1d1d1f;
+    --sidebar-border: #e0e0e0;
+    --sidebar-ring: #0071e3;
+}
+
+.dark {
+    --background: #000000;              /* surface-black */
+    --foreground: #f5f5f7;
+    --card: #1d1d1f;                    /* ink as elevated surface */
+    --card-foreground: #f5f5f7;
+    --popover: #272729;                 /* surface-tile-1 */
+    --popover-foreground: #f5f5f7;
+    --primary: #0066cc;                 /* Action Blue works on dark tiles */
+    --primary-foreground: #ffffff;
+    --secondary: #272729;
+    --secondary-foreground: #f5f5f7;
+    --muted: #272729;
+    --muted-foreground: #cccccc;        /* body-muted */
+    --accent: #2a2a2c;                  /* surface-tile-2 */
+    --accent-foreground: #f5f5f7;
+    --destructive: oklch(0.704 0.191 22.216);
+    --border: rgba(255, 255, 255, 0.14);
+    --input: rgba(255, 255, 255, 0.18);
+    --ring: #2997ff;                    /* sky link blue */
+    --success: #30d158;
+    --success-foreground: #000000;
+    --chart-1: #2997ff;
+    --chart-2: #30d158;
+    --chart-3: #ff9f0a;
+    --chart-4: #bf5af2;
+    --chart-5: #98989d;
+    --sidebar: #1d1d1f;
+    --sidebar-foreground: #f5f5f7;
+    --sidebar-primary: #0066cc;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #2a2a2c;
+    --sidebar-accent-foreground: #f5f5f7;
+    --sidebar-border: rgba(255, 255, 255, 0.14);
+    --sidebar-ring: #2997ff;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-size: 17px;
+    line-height: 1.47;
+    letter-spacing: -0.014em;
+  }
+  /* Apple 系统级按压微交互：所有按钮 active 缩放 */
+  button:not(:disabled) {
+    transition: transform 0.12s ease;
+  }
+  button:not(:disabled):active {
+    transform: scale(0.96);
+  }
+}
+
+@layer components {
+  /* 解析/考点 HTML 内容排版（来自原站富文本） */
+  .prose-cd {
+    font-size: 15px;
+    line-height: 1.65;
+    word-break: break-word;
+  }
+  .prose-cd p {
+    margin: 0.5em 0;
+  }
+  .prose-cd table {
+    border-collapse: collapse;
+    margin: 0.6em 0;
+    max-width: 100%;
+  }
+  .prose-cd td, .prose-cd th {
+    border: 1px solid var(--border);
+    padding: 4px 8px;
+    font-size: 13px;
+  }
+  .prose-cd img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 0.5em 0;
+  }
+  .prose-cd strong {
+    font-weight: 600;
+  }
+}

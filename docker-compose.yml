@@ -1,0 +1,16 @@
+services:
+  web:
+    build: .
+    image: cangdun:latest
+    container_name: cangdun
+    ports:
+      - "37080:80"
+    volumes:
+      # 账密与会话密钥持久化（跨重启/重建保留）
+      - ./cangdun-auth:/config
+    environment:
+      # 可选：固定账密（不设则首次启动随机生成，docker logs cangdun 查看）
+      # - ADMIN_USERNAME=myname
+      # - ADMIN_PASSWORD=mypassword
+      - TZ=Asia/Shanghai
+    restart: unless-stopped

@@ -1,0 +1,8 @@
+# github.com/andybalholm/brotli v1.2.8
+## explicit; go 1.22
+github.com/andybalholm/brotli
+github.com/andybalholm/brotli/matchfinder
+# golang.org/x/crypto v0.31.0
+## explicit; go 1.20
+golang.org/x/crypto/pbkdf2
+golang.org/x/crypto/scrypt

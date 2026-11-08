@@ -23,3 +23,8 @@ nohup.out
 
 # 超过 GitHub 100MB 单文件限制，用 scripts/build_db.py 从 questions.jsonl 重建
 data/cangdun.db
+auth-config/
+cangdun-auth/
+app/public/data/
+app/dist/
+app/auth-config/

@@ -84,3 +84,48 @@ networksetup -setsecurewebproxy Wi-Fi off
 # 可选：移除 mitmproxy CA 证书
 # security delete-certificate -c mitmproxy ~/Library/Keychains/login.keychain-db
 ```
+
+## Web 刷题应用（`app/`）
+
+React 19 + Vite + shadcn/ui（Apple 风格设计规范 `app/DESIGN.md`）构建的刷题站，带**账密认证**（可放心公网部署），答题进度存浏览器 localStorage。
+
+### 登录认证
+
+- **首次部署自动生成随机账密**，打印在容器日志（仅显示一次）：`docker logs cangdun`
+- 账密散列与会话密钥存 `./cangdun-auth/auth.json`（挂载卷，跨重启/重建保留）
+- **重置**：`sudo rm cangdun-auth/auth.json && docker restart cangdun` → 重新随机生成
+- **固定账密**：compose 里设 `ADMIN_USERNAME` / `ADMIN_PASSWORD` 环境变量
+- 保护范围：`/data/*`（题库/图片）未登录一律 401；登录尝试每 IP 5 次失败锁 15 分钟；会话有效期 30 天（HttpOnly HMAC 签名 Cookie）
+- 公网 HTTPS 部署时建议前置反代（Nginx/Caddy/Traefik 终止 TLS），服务端按 `X-Forwarded-Proto` 自动加 `Secure` Cookie
+
+### Docker 一键部署
+
+```bash
+docker compose up -d --build
+# 打开 http://localhost:37080 （端口在 docker-compose.yml 里改）
+# 首次账密: docker logs cangdun
+```
+
+镜像内已完成：数据分片 + Brotli 预压缩 + 字体子集 + 前端构建；运行时为 **Go 静态二进制（scratch 基础镜像，仅二进制+数据，共 48MB）**。手动等价操作：`docker build -t cangdun . && docker run -d -p 37080:80 -v ./cangdun-auth:/config cangdun`。
+
+### 大题库读取优化
+
+- **按需分片**：目录按题库拆分（首屏仅 252B 索引），章节/考点逐个文件按需加载（单章 Brotli 后 ~8KB）
+- **预压缩**：构建期生成 `.br`/`.gz` 静态副本，Caddy `precompressed` 零 CPU 直发
+- **预取**：目录悬停/展开预取，刷题页空闲预取相邻章节，考点列表预热前 20 篇详情
+- **缓存**：服务端 immutable 一年缓存 + Service Worker（SWR），二次访问与离线零网络
+- **字体**：Inter + Noto Sans SC 按 `app/scripts/charset.txt`（题库实际用字 3,934 个）裁剪子集（17.7MB → 1.04MB）
+
+### 本地开发
+
+```bash
+cd app
+npm ci
+npm run optimize:data   # webapp/data → public/data（分片 + Brotli；--slim 只留 .br）
+npm run dev             # 开发服务器
+npm run build           # 生产构建（产物 dist/）
+npm run serve           # Go 服务（认证+静态）http://localhost:3777，账密见启动日志（需 go ≥1.22）
+npm run e2e             # 浏览器 E2E（需先 serve，账号从日志取后传 E2E_USER/E2E_PASS 环境变量）
+npm run subset:fonts    # 重新裁剪字体子集（需先准备字体源，见脚本头注释）
+```
+

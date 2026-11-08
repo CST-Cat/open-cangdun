@@ -37,7 +37,7 @@ export default function TopBar() {
       to={to}
       className={cn(
         'flex items-center gap-1.5 rounded-full px-3 py-1 text-[13px] transition-colors',
-        pathname === to || (to === '/' && pathname.startsWith('/ch'))
+        pathname === to || (to === '/' && (pathname.startsWith('/ch') || pathname.startsWith('/s')))
           ? 'bg-white/20 text-white'
           : 'text-white/65 hover:text-white',
       )}

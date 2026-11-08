@@ -1,6 +1,6 @@
 // 数据访问层：fetch + 内存缓存 + 请求去重 + 超时 + 预取
 // 所有产物均为 immutable 静态文件（服务端 immutable 缓存 + SW 兜底）
-import type { Catalog, Chapter, Kaodian, KaodianIndexItem, Tikus } from './types'
+import type { Catalog, Chapter, Kaodian, KaodianIndexItem, Sections, Tikus } from './types'
 
 const TIMEOUT = 10_000
 const mem = new Map<string, unknown>()
@@ -42,6 +42,9 @@ export const getCatalog = (idx: number) => getJSON<Catalog>(`/data/catalog/${idx
 export const getChapter = (id: string) => getJSON<Chapter>(`/data/ch/${id}.json`)
 export const getKaodianIndex = () => getJSON<KaodianIndexItem[]>('/data/kd/index.json')
 export const getKaodian = (id: string) => getJSON<Kaodian>(`/data/kd/${id}.json`)
+export const getSections = () => getJSON<Sections>('/data/sections.json')
+
+export const prefetchSections = () => prefetch('/data/sections.json')
 
 export const prefetchChapter = (id: string) => prefetch(`/data/ch/${id}.json`)
 export const prefetchCatalog = (idx: number) => prefetch(`/data/catalog/${idx}.json`)

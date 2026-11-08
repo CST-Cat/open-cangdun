@@ -76,6 +76,43 @@ const chapterCount = tikuNames.reduce(
   (acc, n) => acc + Object.values(catalog[n]).reduce((s, l) => s + l.length, 0), 0)
 console.log(`目录: ${tikuNames.length} 题库 / ${chapterCount} 章节 → tikus.json + catalog/*.json`)
 
+// ---------- 1b. 原版四大分区（强化题库/冲刺模拟/精选题库/专题模块） ----------
+// 分组依据原小程序页面结构（data/qianghua_full.json、chongci_full.json、cdtklist_full.json）
+const has = (n) => (catalog[n] ? { name: n, tiku: n } : null)
+const pick = (...names) => names.map(has).filter(Boolean)
+const sections = {
+  qianghua: pick(
+    '27余峰500题', '27腿姐刷题计划', '27杨攀660题', '27米鹏1000题',
+    '27版肖1000', '27版徐涛优题库-基础题', '27版徐涛优题库-拔高题',
+  ),
+  chongci: [
+    { group: '27版冲刺押题库（不断更新）', books: pick('27腿姐8套卷', '27版米鹏6套卷') },
+  ].filter((g) => g.books.length > 0),
+  jingxuan: [
+    has('27肖秀荣1600题') && { name: '精选1600题', ...has('27肖秀荣1600题') },
+    has('27肖秀荣600题') && { name: '二刷600题', ...has('27肖秀荣600题') },
+    catalog['精选题库(根)']?.['真题刷题'] && { name: '真题刷题', tiku: '精选题库(根)', subject: '真题刷题' },
+    { name: '真题（章节版）', multi: pick('马原', '毛中特', '史纲', '思修', '新思想') },
+    has('冲刺300题') && { name: '冲刺300题', ...has('冲刺300题') },
+    has('每日刷题') && { name: '每日刷题', ...has('每日刷题') },
+    has('时政题库') && { name: '时政刷题', ...has('时政题库') },
+    catalog['精选题库(根)']?.['名师题库'] && { name: '名师题库', tiku: '精选题库(根)', subject: '名师题库' },
+    catalog['精选题库(根)']?.['冲刺模拟'] && { name: '冲刺模拟', tiku: '精选题库(根)', subject: '冲刺模拟' },
+    catalog['精选题库(根)']?.['精选1600题(2024)'] && { name: '精选1600题（2024版）', tiku: '精选题库(根)', subject: '精选1600题(2024)' },
+    catalog['精选题库(根)']?.['精选1600题(2026)'] && { name: '精选1600题（2026版）', tiku: '精选题库(根)', subject: '精选1600题(2026)' },
+    catalog['精选题库(根)']?.['二刷600题(2026)'] && { name: '二刷600题（2026版）', tiku: '精选题库(根)', subject: '二刷600题(2026)' },
+  ].filter(Boolean),
+  zhuanti: [
+    { name: '组合刷题', multi: pick('27听涛涛课刷肖1000', '27听腿姐课刷肖1000', '27张修齐肖1000重点题') },
+    has('时政汇编') && { name: '时政●冲刺', ...has('时政汇编') },
+    { name: '考点整理', href: '/kd' },
+    { name: '考点刷题', href: '/kd' },
+  ].filter((e) => !('multi' in e) || e.multi.length > 0),
+}
+write('sections.json', JSON.stringify(sections))
+const secTotal = Object.values(sections).flat().length
+console.log(`分区: 四大板块 ${secTotal} 个条目 → sections.json`)
+
 // ---------- 2. 章节分片 → 纯 JSON ----------
 const chDir = join(dataDir, 'ch')
 const files = readdirSync(chDir).filter((f) => f.endsWith('.js'))

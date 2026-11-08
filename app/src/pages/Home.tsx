@@ -1,27 +1,31 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import {
   ArrowRightIcon,
   BooksIcon,
-  CaretRightIcon,
+  CrosshairIcon,
+  GraduationCapIcon,
+  LightningIcon,
+  TargetIcon,
   CheckCircleIcon,
   ChartBarIcon,
-  LightningIcon,
+  BookBookmarkIcon,
+  PuzzlePieceIcon,
 } from '@phosphor-icons/react'
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { getCatalog, getTikus, prefetchCatalog, prefetchChapter } from '@/lib/data'
-import { chapterStat, getLast, globalStat, useRecordsVersion } from '@/lib/progress'
-import type { Catalog, Tikus } from '@/lib/types'
-import { cn } from '@/lib/utils'
+import { getSections, prefetchSections } from '@/lib/data'
+import { getLast, globalStat, useRecordsVersion } from '@/lib/progress'
+import type { Sections } from '@/lib/types'
+
+// 四大分区（对应原小程序：强化题库/冲刺模拟/精选题库/专题模块）
+const SECTION_META = [
+  { key: 'qianghua', name: '强化题库', en: 'Intensive', icon: BooksIcon, cls: 'bg-[#3b7cf0]' },
+  { key: 'chongci', name: '冲刺模拟', en: 'Sprint', icon: LightningIcon, cls: 'bg-[#7c5cf0]' },
+  { key: 'jingxuan', name: '精选题库', en: 'Selection', icon: CrosshairIcon, cls: 'bg-[#2aa8a0]' },
+  { key: 'zhuanti', name: '专题模块', en: 'Topics', icon: PuzzlePieceIcon, cls: 'bg-[#34a853]' },
+] as const
 
 function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
@@ -39,54 +43,21 @@ function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string
   )
 }
 
-/** 题库条目（accordion 触发行）：hover 即预取该题库目录 */
-function TikuTrigger({
-  name,
-  chapterTotal,
-  idx,
-}: {
-  name: string
-  chapterTotal?: number
-  idx: number
-}) {
-  return (
-    <AccordionTrigger
-      onMouseEnter={() => prefetchCatalog(idx)}
-      className="py-4 text-[17px] font-semibold tracking-tight hover:no-underline"
-    >
-      <span className="flex w-full items-center justify-between gap-2 pr-2">
-        <span>{name}</span>
-        <span className="text-xs font-normal text-muted-foreground tabular-nums">
-          {chapterTotal === undefined ? '' : `${chapterTotal} 章`}
-        </span>
-      </span>
-    </AccordionTrigger>
-  )
-}
-
 export default function Home() {
-  const [tikus, setTikus] = useState<Tikus | null>(null)
+  const [sections, setSections] = useState<Sections | null>(null)
   const [error, setError] = useState(false)
-  const [catas, setCatas] = useState<Record<number, Catalog>>({})
-  const navigate = useNavigate()
-  useRecordsVersion() // 记录变化时重渲染进度
+  useRecordsVersion()
 
   useEffect(() => {
+    prefetchSections()
     let alive = true
-    getTikus().then(setTikus).catch(() => alive && setError(true))
+    getSections()
+      .then((s) => alive && setSections(s))
+      .catch(() => alive && setError(true))
     return () => {
       alive = false
     }
   }, [])
-
-  const loadCatalog = (idx: number) => {
-    if (catas[idx]) return
-    void getCatalog(idx).then((c) => setCatas((prev) => ({ ...prev, [idx]: c })))
-  }
-
-  const openChapter = (tiku: string, subj: string, ids: string[], idx: number) => {
-    void navigate(`/ch/${ids[idx]}`, { state: { tiku, subj, siblings: ids, sIdx: idx } })
-  }
 
   const last = getLast()
   const stats = globalStat()
@@ -94,16 +65,16 @@ export default function Home() {
   return (
     <main className="mx-auto w-full max-w-2xl px-4 pb-24">
       {/* 头部 */}
-      <section className="pt-8 pb-6 text-center sm:pt-12">
-        <h1 className="text-[32px] leading-tight font-semibold tracking-tight sm:text-[40px]">
+      <section className="pt-8 pb-6 text-center sm:pt-10">
+        <h1 className="text-[30px] leading-tight font-semibold tracking-tight sm:text-[36px]">
           考研政治，刷完为止
         </h1>
-        <p className="mt-2 text-[15px] text-muted-foreground">
-          34,784 道题 · 24 个题库 · 答案解析全收录
+        <p className="mt-1.5 text-[15px] text-muted-foreground">
+          34,784 道题 · 四大题库 · 按原版分区
         </p>
       </section>
 
-      {/* 统计 + 继续刷题 */}
+      {/* 继续刷题 + 统计 */}
       <section className="space-y-3">
         {last && (
           <Card className="rounded-2xl shadow-none">
@@ -126,7 +97,7 @@ export default function Home() {
         )}
         <div className="grid grid-cols-3 gap-3">
           <StatCard
-            icon={<BooksIcon className="size-5" weight="duotone" />}
+            icon={<GraduationCapIcon className="size-5" weight="duotone" />}
             label="已刷章节"
             value={`${stats.chapters}`}
           />
@@ -143,103 +114,79 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 题库目录 */}
-      <section className="pt-8">
-        <h2 className="mb-1 px-1 text-[21px] font-semibold tracking-tight">题库目录</h2>
+      {/* 四大分区入口 */}
+      <section className="pt-7">
+        <h2 className="mb-3 px-1 text-[21px] font-semibold tracking-tight">题库分区</h2>
         {error && (
-          <Card className="mt-3 rounded-2xl shadow-none">
+          <Card className="rounded-2xl shadow-none">
             <CardContent className="flex flex-col items-center gap-3 py-8">
-              <p className="text-sm text-muted-foreground">目录加载失败</p>
+              <p className="text-sm text-muted-foreground">分区加载失败</p>
               <Button variant="outline" className="rounded-full" onClick={() => location.reload()}>
                 重试
               </Button>
             </CardContent>
           </Card>
         )}
-        {!tikus && !error && (
-          <div className="mt-3 space-y-2">
-            {Array.from({ length: 6 }, (_, i) => (
-              <Skeleton key={i} className="h-12 w-full rounded-xl" />
+        {!sections && !error && (
+          <div className="grid grid-cols-2 gap-3">
+            {Array.from({ length: 4 }, (_, i) => (
+              <Skeleton key={i} className="h-28 w-full rounded-2xl" />
             ))}
           </div>
         )}
-        {tikus && (
-          <Accordion type="single" collapsible className="mt-2" onValueChange={(v) => {
-            const idx = v ? Number(v) : -1
-            if (idx >= 0) loadCatalog(idx)
-          }}>
-            {tikus.map((name, idx) => {
-              const cata = catas[idx]
-              const chapterTotal = cata
-                ? Object.values(cata).reduce((s, l) => s + l.length, 0)
-                : undefined
+        {sections && (
+          <div className="grid grid-cols-2 gap-3">
+            {SECTION_META.map(({ key, name, en, icon: Icon, cls }) => {
+              const count =
+                key === 'chongci'
+                  ? sections.chongci.reduce((s, g) => s + g.books.length, 0)
+                  : (sections[key as keyof Sections] as unknown[]).length
               return (
-                <AccordionItem key={name} value={`${idx}`} className="border-border/70">
-                  <TikuTrigger name={name} chapterTotal={chapterTotal} idx={idx} />
-                  <AccordionContent className="pb-3">
-                    {!cata && (
-                      <div className="space-y-2 py-1">
-                        {Array.from({ length: 3 }, (_, i) => (
-                          <Skeleton key={i} className="h-10 w-full rounded-lg" />
-                        ))}
-                      </div>
-                    )}
-                    {cata &&
-                      Object.entries(cata).map(([subj, chapters]) => {
-                        const ids = chapters.map((c) => c.id)
-                        return (
-                          <div key={subj} className="mb-3 last:mb-0">
-                            <div className="px-1 pb-1 text-xs font-semibold text-muted-foreground">
-                              {subj}
-                            </div>
-                            <div className="overflow-hidden rounded-xl border border-border/70">
-                              {chapters.map((ch, i) => {
-                                const st = chapterStat(ch.id)
-                                const pct = ch.c ? Math.round((st.answered / ch.c) * 100) : 0
-                                return (
-                                  <button
-                                    key={ch.id}
-                                    onClick={() => openChapter(name, subj, ids, i)}
-                                    onMouseEnter={() => prefetchChapter(ch.id)}
-                                    className={cn(
-                                      'flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors hover:bg-secondary active:bg-secondary',
-                                      'border-border/50 not-last:border-b',
-                                    )}
-                                  >
-                                    <div className="min-w-0 flex-1">
-                                      <div className="truncate text-[15px] leading-snug">{ch.n}</div>
-                                      {st.answered > 0 && (
-                                        <div className="mt-1 flex items-center gap-1.5">
-                                          <div className="h-1 w-16 overflow-hidden rounded-full bg-muted">
-                                            <div
-                                              className="h-full rounded-full bg-primary"
-                                              style={{ width: `${pct}%` }}
-                                            />
-                                          </div>
-                                          <span className="text-[11px] text-muted-foreground tabular-nums">
-                                            {st.answered}/{ch.c}
-                                          </span>
-                                        </div>
-                                      )}
-                                    </div>
-                                    <Badge variant="secondary" className="shrink-0 tabular-nums">
-                                      {ch.c} 题
-                                    </Badge>
-                                    <CaretRightIcon className="size-3.5 shrink-0 text-muted-foreground/60" />
-                                  </button>
-                                )
-                              })}
-                            </div>
-                          </div>
-                        )
-                      })}
-                  </AccordionContent>
-                </AccordionItem>
+                <Link
+                  key={key}
+                  to={`/s/${key}`}
+                  onMouseEnter={prefetchSections}
+                  className={`${cls} relative overflow-hidden rounded-2xl p-4 text-white transition-transform active:scale-[0.98]`}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="text-[19px] leading-tight font-semibold tracking-tight">{name}</div>
+                    <Icon className="size-6 opacity-80" weight="duotone" />
+                  </div>
+                  <div className="mt-6 flex items-end justify-between">
+                    <span className="text-[13px] font-medium opacity-80 first-letter:text-[17px]">{en}</span>
+                    <span className="text-xs opacity-75 tabular-nums">{count} 项</span>
+                  </div>
+                  <div className="absolute inset-x-0 bottom-0 h-1 bg-white/30" />
+                </Link>
               )
             })}
-          </Accordion>
+          </div>
+        )}
+
+        {/* 考点教材 */}
+        {sections && (
+          <Link
+            to="/kd"
+            className="mt-3 flex items-center justify-between rounded-2xl border border-border/70 px-4 py-3.5 transition-colors hover:bg-secondary"
+          >
+            <div className="flex items-center gap-3">
+              <div className="flex size-9 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <BookBookmarkIcon className="size-5" weight="duotone" />
+              </div>
+              <div>
+                <div className="text-[15px] font-semibold">考点教材</div>
+                <div className="text-xs text-muted-foreground">484 个考点 · 教材内容整理</div>
+              </div>
+            </div>
+            <ArrowRightIcon className="size-4 text-muted-foreground" />
+          </Link>
         )}
       </section>
+
+      <footer className="pt-10 pb-2 text-center text-[11px] text-muted-foreground/70">
+        <TargetIcon className="mr-1 inline size-3" />
+        数据仅供个人学习交流 · 来源苍盾题库
+      </footer>
     </main>
   )
 }

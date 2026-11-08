@@ -20,3 +20,16 @@ export type Chapter = { n: string; qs: Question[] }
 
 export type KaodianIndexItem = { i: string; t: string }
 export type Kaodian = { t: string; h: string }
+
+// 原版四大分区（sections.json）
+export type Book = { name: string; tiku: string; subject?: string }
+export type SectionEntry =
+  | Book
+  | { name: string; multi: Book[] }
+  | { name: string; href: string }
+export type Sections = {
+  qianghua: Book[]
+  chongci: { group: string; books: Book[] }[]
+  jingxuan: SectionEntry[]
+  zhuanti: SectionEntry[]
+}

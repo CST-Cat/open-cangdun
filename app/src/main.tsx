@@ -12,6 +12,7 @@ import './index.css'
 const Home = lazy(() => import('@/pages/Home'))
 const Quiz = lazy(() => import('@/pages/Quiz'))
 const Kaodian = lazy(() => import('@/pages/Kaodian'))
+const SectionPage = lazy(() => import('@/pages/SectionPage'))
 
 function PageFallback() {
   return (
@@ -53,6 +54,7 @@ function Shell() {
       <Suspense fallback={<PageFallback />}>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/s/:key" element={<SectionPage />} />
           <Route path="/ch/:id" element={<Quiz />} />
           <Route path="/kd" element={<Kaodian />} />
           <Route path="*" element={<Home />} />

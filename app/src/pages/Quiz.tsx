@@ -5,18 +5,18 @@ import {
   ArrowRightIcon,
   CaretLeftIcon,
   CaretRightIcon,
-  CheckCircleIcon,
   ListIcon,
-  WarningCircleIcon,
-  XCircleIcon,
 } from '@phosphor-icons/react'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
 import { Progress } from '@/components/ui/progress'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { getChapter, prefetchChapter } from '@/lib/data'
 import { cleanHTML } from '@/lib/html'
 import { getChapterRecords, judge, recordAnswer, setLast, useRecordsVersion } from '@/lib/progress'
@@ -28,68 +28,19 @@ const idle = (fn: () => void) => {
   else setTimeout(fn, 300)
 }
 
-/** 去掉选项自带的 "A." / "A、" 前缀，字母交给样式 chip */
+/** 去掉选项自带的 "A." / "A、" 前缀，字母交给 Badge */
 const stripPrefix = (s: string) => s.replace(/^[A-D]\s*[.、．:：]\s*/, '')
 
 const pct = (r: number, tot: number) => (tot > 0 ? `${Math.round((r / tot) * 100)}%` : null)
 
-/** 选项行 */
-function OptionRow({
-  letter,
-  text,
-  state,
-  onClick,
-}: {
-  letter: string
-  text: string
-  state: 'idle' | 'picked' | 'correct' | 'wrong' | 'dim'
-  onClick: () => void
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={cn(
-        'flex w-full items-start gap-3 rounded-2xl border px-3.5 py-3 text-left transition-colors',
-        state === 'idle' && 'border-border/80 bg-background hover:border-primary/40 hover:bg-secondary/60',
-        state === 'picked' && 'border-primary bg-primary/5',
-        state === 'correct' && 'border-success bg-success/10',
-        state === 'wrong' && 'border-destructive bg-destructive/10',
-        state === 'dim' && 'border-border/50 opacity-55',
-      )}
-    >
-      <span
-        className={cn(
-          'mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full border text-[13px] font-semibold',
-          state === 'idle' && 'border-border text-muted-foreground',
-          state === 'picked' && 'border-primary bg-primary text-white',
-          state === 'correct' && 'border-success bg-success text-white',
-          state === 'wrong' && 'border-destructive bg-destructive text-white',
-          state === 'dim' && 'border-border/60 text-muted-foreground',
-        )}
-      >
-        {letter}
-      </span>
-      <span className="text-[15px] leading-relaxed">{text}</span>
-    </button>
-  )
+/** 判分后选项配色（仅 shadcn 组件 + 状态类） */
+function judgedClass(letter: string, pickedNow: string[], answer: string): string {
+  const isAnswer = answer.includes(letter)
+  const isPicked = pickedNow.includes(letter)
+  if (isAnswer) return 'border-success! bg-success/15! text-success!'
+  if (isPicked) return 'border-destructive! bg-destructive/15! text-destructive!'
+  return 'opacity-50'
 }
-
-function QuestionSkeleton() {
-  return (
-    <div className="space-y-3">
-      <Skeleton className="h-6 w-20 rounded-full" />
-      <Skeleton className="h-5 w-full" />
-      <Skeleton className="h-5 w-4/5" />
-      <div className="space-y-2.5 pt-2">
-        {Array.from({ length: 4 }, (_, i) => (
-          <Skeleton key={i} className="h-14 w-full rounded-2xl" />
-        ))}
-      </div>
-    </div>
-  )
-}
-
-type OptionState = 'idle' | 'picked' | 'correct' | 'wrong' | 'dim'
 
 export default function Quiz() {
   const { id = '' } = useParams()
@@ -157,7 +108,7 @@ export default function Quiz() {
   const doJudge = useCallback(() => {
     if (!q || judged || picked.length === 0) return
     setJudged(true)
-    recordAnswer(id, q.i, picked.sort().join(''), judge(picked, q.a))
+    recordAnswer(id, q.i, [...picked].sort().join(''), judge(picked, q.a))
   }, [id, q, judged, picked])
 
   const pick = (letter: string) => {
@@ -194,18 +145,7 @@ export default function Quiz() {
     if (!state) return
     const nextId = state.siblings[state.sIdx + delta]
     if (!nextId) return
-    navigate(`/ch/${nextId}`, {
-      state: { ...state, sIdx: state.sIdx + delta },
-    })
-  }
-
-  const optionState = (letter: string, pickedNow: string[], judgedNow: boolean, answer: string): OptionState => {
-    if (!judgedNow) return pickedNow.includes(letter) ? 'picked' : 'idle'
-    const isAnswer = answer.includes(letter)
-    const isPicked = pickedNow.includes(letter)
-    if (isAnswer) return 'correct'
-    if (isPicked) return 'wrong'
-    return 'dim'
+    navigate(`/ch/${nextId}`, { state: { ...state, sIdx: state.sIdx + delta } })
   }
 
   return (
@@ -234,29 +174,37 @@ export default function Quiz() {
               <SheetHeader>
                 <SheetTitle className="text-left">本章题目（{total}）</SheetTitle>
               </SheetHeader>
-              <div className="grid max-h-[50vh] grid-cols-7 gap-2 overflow-y-auto px-4 pb-8 sm:grid-cols-9">
+              <ToggleGroup
+                type="single"
+                variant="outline"
+                className="grid w-full max-h-[50vh] grid-cols-7 grid-flow-dense gap-2 overflow-y-auto px-4 pb-8 sm:grid-cols-9"
+                value={String(qIdx)}
+                onValueChange={(v) => {
+                  if (v !== '') {
+                    go(Number(v))
+                    setGridOpen(false)
+                  }
+                }}
+              >
                 {chapter?.qs.map((qq, i) => {
                   const rec = records[qq.i]
                   return (
-                    <button
+                    <ToggleGroupItem
                       key={qq.i}
-                      onClick={() => {
-                        go(i)
-                        setGridOpen(false)
-                      }}
+                      value={String(i)}
                       className={cn(
-                        'flex h-9 items-center justify-center rounded-lg border text-[13px] font-medium tabular-nums transition-colors',
-                        i === qIdx && 'ring-2 ring-primary ring-offset-1',
-                        !rec && 'bg-secondary text-secondary-foreground',
-                        rec?.[1] === 1 && 'border-success/40 bg-success/15 text-success',
-                        rec?.[1] === 0 && 'border-destructive/40 bg-destructive/15 text-destructive',
+                        'tabular-nums',
+                        !rec && '',
+                        rec?.[1] === 1 && 'border-success/60! bg-success/15! text-success!',
+                        rec?.[1] === 0 && 'border-destructive/60! bg-destructive/15! text-destructive!',
+                        i === qIdx && 'ring-2 ring-primary',
                       )}
                     >
                       {i + 1}
-                    </button>
+                    </ToggleGroupItem>
                   )
                 })}
-              </div>
+              </ToggleGroup>
             </SheetContent>
           </Sheet>
         </div>
@@ -264,21 +212,27 @@ export default function Quiz() {
       </div>
 
       {failed && (
-        <Card className="rounded-2xl shadow-none">
-          <CardContent className="flex flex-col items-center gap-3 py-10">
-            <WarningCircleIcon className="size-8 text-destructive" />
-            <p className="text-sm text-muted-foreground">章节加载失败</p>
+        <Empty className="rounded-2xl border py-12">
+          <EmptyHeader>
+            <EmptyTitle>章节加载失败</EmptyTitle>
+            <EmptyDescription>网络或数据暂时不可用</EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
             <Button variant="outline" className="rounded-full" onClick={load}>
               重试
             </Button>
-          </CardContent>
-        </Card>
+          </EmptyContent>
+        </Empty>
       )}
 
       {!chapter && !failed && (
-        <Card className="rounded-2xl shadow-none">
-          <CardContent className="py-6">
-            <QuestionSkeleton />
+        <Card className="rounded-2xl py-6 shadow-none">
+          <CardContent className="space-y-3">
+            <Skeleton className="h-6 w-20 rounded-full" />
+            <Skeleton className="h-5 w-full" />
+            <Skeleton className="h-5 w-4/5" />
+            <Skeleton className="h-14 w-full rounded-2xl" />
+            <Skeleton className="h-14 w-full rounded-2xl" />
           </CardContent>
         </Card>
       )}
@@ -286,7 +240,7 @@ export default function Quiz() {
       {q && chapter && (
         <div ref={topRef} className="scroll-mt-28">
           {/* 题干 */}
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Badge variant={isMulti ? 'secondary' : 'default'} className="rounded-full px-2.5">
               {q.t}
             </Badge>
@@ -296,18 +250,56 @@ export default function Quiz() {
             {q.q}
           </p>
 
-          {/* 选项 */}
-          <div className="mt-4 space-y-2.5">
-            {Object.entries(q.o).map(([letter, text]) => (
-              <OptionRow
-                key={letter}
-                letter={letter}
-                text={stripPrefix(text)}
-                state={optionState(letter, picked, judged, q.a)}
-                onClick={() => pick(letter)}
-              />
-            ))}
-          </div>
+          {/* 选项：ToggleGroup（单选 single / 多选 multiple） */}
+          {isMulti ? (
+            <ToggleGroup
+              type="multiple"
+              variant="outline"
+              className="mt-4 w-full flex-col items-stretch gap-2.5"
+              value={judged ? [] : picked}
+              disabled={judged}
+              onValueChange={(v: string[]) => setPicked(v)}
+            >
+              {Object.entries(q.o).map(([letter, text]) => (
+                <ToggleGroupItem
+                  key={letter}
+                  value={letter}
+                  className={cn(
+                    'h-auto justify-start gap-3 rounded-2xl px-3.5 py-3 text-left',
+                    judged && judgedClass(letter, picked, q.a),
+                  )}
+                >
+                  <Badge variant="secondary" className="shrink-0">{letter}</Badge>
+                  <span className="text-[15px] leading-relaxed font-normal">{stripPrefix(text)}</span>
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+          ) : (
+            <ToggleGroup
+              type="single"
+              variant="outline"
+              className="mt-4 w-full flex-col items-stretch gap-2.5"
+              value={judged ? '' : (picked[0] ?? '')}
+              disabled={judged}
+              onValueChange={(v: string) => {
+                if (v) pick(v)
+              }}
+            >
+              {Object.entries(q.o).map(([letter, text]) => (
+                <ToggleGroupItem
+                  key={letter}
+                  value={letter}
+                  className={cn(
+                    'h-auto justify-start gap-3 rounded-2xl px-3.5 py-3 text-left',
+                    judged && judgedClass(letter, picked, q.a),
+                  )}
+                >
+                  <Badge variant="secondary" className="shrink-0">{letter}</Badge>
+                  <span className="text-[15px] leading-relaxed font-normal">{stripPrefix(text)}</span>
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+          )}
 
           {/* 多选确认 */}
           {isMulti && !judged && (
@@ -322,39 +314,34 @@ export default function Quiz() {
             </Button>
           )}
 
-          {/* 判分结果 */}
+          {/* 判分结果：Alert */}
           {judged && q && (
             <div className="mt-4 space-y-3">
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
-                {judge(picked, q.a) ? (
-                  <span className="flex items-center gap-1.5 font-semibold text-success">
-                    <CheckCircleIcon className="size-4.5" weight="fill" /> 回答正确
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-1.5 font-semibold text-destructive">
-                    <XCircleIcon className="size-4.5" weight="fill" /> 回答错误
-                  </span>
-                )}
-                <span className="text-muted-foreground">
-                  正确答案
-                  <span className="ml-1.5 font-semibold text-foreground tracking-widest">{q.a}</span>
-                </span>
-                {pct(q.r, q.tot) && (
-                  <Tooltip>
-                    <TooltipTrigger className="text-muted-foreground tabular-nums">
-                      全站正确率 {pct(q.r, q.tot)}
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      {q.r.toLocaleString()} / {q.tot.toLocaleString()} 人做对
-                    </TooltipContent>
-                  </Tooltip>
-                )}
-              </div>
+              <Alert className={cn(judge(picked, q.a) ? 'border-success/40 bg-success/10' : 'border-destructive/40 bg-destructive/10')}>
+                <AlertTitle className={cn('text-[15px] font-semibold', judge(picked, q.a) ? 'text-success' : 'text-destructive')}>
+                  {judge(picked, q.a) ? '回答正确' : '回答错误'}
+                </AlertTitle>
+                <AlertDescription className="flex flex-wrap items-center gap-2">
+                  <Badge variant="outline">正确答案 {q.a}</Badge>
+                  {pct(q.r, q.tot) && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Badge variant="outline" className="tabular-nums">全站正确率 {pct(q.r, q.tot)}</Badge>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        {q.r.toLocaleString()} / {q.tot.toLocaleString()} 人做对
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
+                </AlertDescription>
+              </Alert>
 
               {q.j && (
-                <Card className="rounded-2xl bg-secondary/60 shadow-none">
-                  <CardContent className="px-4 py-3">
-                    <div className="mb-1 text-xs font-semibold text-muted-foreground">解析</div>
+                <Card className="rounded-2xl bg-secondary/60 py-4 shadow-none">
+                  <CardHeader className="px-4">
+                    <CardTitle className="text-sm text-muted-foreground">解析</CardTitle>
+                  </CardHeader>
+                  <CardContent className="px-4">
                     <div
                       className="prose-cd"
                       dangerouslySetInnerHTML={{ __html: cleanHTML(q.j) }}
@@ -398,7 +385,6 @@ export default function Quiz() {
           </div>
         </div>
       )}
-
     </main>
   )
 }

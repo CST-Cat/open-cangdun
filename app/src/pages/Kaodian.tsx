@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
-import { CaretRightIcon, MagnifyingGlassIcon, WarningCircleIcon } from '@phosphor-icons/react'
+import { MagnifyingGlassIcon, WarningCircleIcon } from '@phosphor-icons/react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import {
   Dialog,
   DialogContent,
@@ -10,7 +9,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
 import { Input } from '@/components/ui/input'
+import { Item, ItemActions, ItemContent, ItemTitle } from '@/components/ui/item'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getKaodian, getKaodianIndex, prefetchKaodian } from '@/lib/data'
 import { cleanHTML } from '@/lib/html'
@@ -82,15 +83,20 @@ export default function Kaodian() {
       </div>
 
       {failed && (
-        <Card className="mt-4 rounded-2xl shadow-none">
-          <CardContent className="flex flex-col items-center gap-3 py-10">
-            <WarningCircleIcon className="size-8 text-destructive" />
-            <p className="text-sm text-muted-foreground">考点索引加载失败</p>
+        <Empty className="mt-4 rounded-2xl border py-12">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <WarningCircleIcon />
+            </EmptyMedia>
+            <EmptyTitle>考点索引加载失败</EmptyTitle>
+            <EmptyDescription>数据暂时无法获取</EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
             <Button variant="outline" className="rounded-full" onClick={() => location.reload()}>
               重试
             </Button>
-          </CardContent>
-        </Card>
+          </EmptyContent>
+        </Empty>
       )}
 
       {!index && !failed && (
@@ -104,24 +110,37 @@ export default function Kaodian() {
       {index && (
         <>
           <p className="px-1 pb-2 text-xs text-muted-foreground tabular-nums">{filtered.length} 个考点</p>
-          <div className="overflow-hidden rounded-2xl border border-border/70">
+          <div className="grid gap-2">
             {filtered.map((item, i) => (
-              <button
+              <Item
+                asChild
                 key={item.i}
-                onClick={() => openDetail(item)}
+                variant="outline"
+                size="sm"
+                className="rounded-xl"
                 onMouseEnter={() => prefetchKaodian(item.i)}
-                className="flex w-full items-center gap-3 border-border/50 px-3.5 py-3 text-left transition-colors hover:bg-secondary active:bg-secondary not-last:border-b"
               >
-                <span className="min-w-0 flex-1 truncate text-[15px]">{item.t}</span>
-                <CaretRightIcon className="size-3.5 shrink-0 text-muted-foreground/60" />
-                {/* 首屏空闲后由浏览器预热前 20 个详情 */}
-                {i === 0 && <IdlePrefetch items={filtered.slice(0, 20)} />}
-              </button>
+                <button type="button" onClick={() => openDetail(item)}>
+                  <ItemContent>
+                    <ItemTitle className="truncate text-[14px] font-normal">{item.t}</ItemTitle>
+                  </ItemContent>
+                  <ItemActions>
+                    <Badge variant="secondary" className="tabular-nums">#{i + 1}</Badge>
+                  </ItemActions>
+                </button>
+              </Item>
             ))}
-            {filtered.length === 0 && (
-              <div className="py-10 text-center text-sm text-muted-foreground">没有匹配的考点</div>
-            )}
+            {/* 列表渲染后空闲预热前 20 个详情 */}
+            {filtered.length > 0 && <IdlePrefetch items={filtered.slice(0, 20)} />}
           </div>
+          {filtered.length === 0 && (
+            <Empty className="mt-4 rounded-2xl border py-10">
+              <EmptyHeader>
+                <EmptyTitle>没有匹配的考点</EmptyTitle>
+                <EmptyDescription>换个关键词试试</EmptyDescription>
+              </EmptyHeader>
+            </Empty>
+          )}
         </>
       )}
 
@@ -135,13 +154,19 @@ export default function Kaodian() {
             <DialogDescription className="sr-only">考点教材内容</DialogDescription>
           </DialogHeader>
           {detailFailed && (
-            <div className="flex flex-col items-center gap-3 py-8">
-              <WarningCircleIcon className="size-7 text-destructive" />
-              <p className="text-sm text-muted-foreground">内容加载失败</p>
-              <Button variant="outline" className="rounded-full" onClick={() => active && openDetail(active.item)}>
-                重试
-              </Button>
-            </div>
+            <Empty className="rounded-xl border py-8">
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <WarningCircleIcon />
+                </EmptyMedia>
+                <EmptyTitle>内容加载失败</EmptyTitle>
+              </EmptyHeader>
+              <EmptyContent>
+                <Button variant="outline" className="rounded-full" onClick={() => active && openDetail(active.item)}>
+                  重试
+                </Button>
+              </EmptyContent>
+            </Empty>
           )}
           {!detail && !detailFailed && (
             <div className="space-y-2.5">
@@ -153,7 +178,11 @@ export default function Kaodian() {
           {detail && (
             <div>
               {!detail.h ? (
-                <p className="py-6 text-center text-sm text-muted-foreground">该考点暂无教材内容</p>
+                <Empty className="rounded-xl border py-8">
+                  <EmptyHeader>
+                    <EmptyTitle>该考点暂无教材内容</EmptyTitle>
+                  </EmptyHeader>
+                </Empty>
               ) : (
                 <div className="prose-cd" dangerouslySetInnerHTML={{ __html: cleanHTML(detail.h) }} />
               )}

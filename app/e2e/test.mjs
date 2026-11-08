@@ -58,7 +58,7 @@ const scrollInfo = await page.evaluate(() => {
   return new Promise((r) => setTimeout(() => r({
     scrollY: window.scrollY,
     max: document.documentElement.scrollHeight - window.innerHeight,
-    lastBookVisible: [...document.querySelectorAll('h3')].some((h) => h.textContent?.includes('27版徐涛优题库-拔高题')),
+    lastBookVisible: [...document.querySelectorAll('[data-slot="card-title"]')].some((h) => h.textContent?.includes('27版徐涛优题库-拔高题')),
   }), 400))
 })
 if (scrollInfo.scrollY < scrollInfo.max - 5) fail(`滚动不完整: ${scrollInfo.scrollY}/${scrollInfo.max}`)
@@ -67,7 +67,7 @@ ok(`强化题库 7 本书 · 滚动到底完整可见（${scrollInfo.scrollY}/${
 
 // 6. 打开书 → 科目 chips → 马原 → 章节列表
 const openT = Date.now()
-await page.getByRole('button', { name: /^马原/ }).first().click()
+await page.getByRole('radio', { name: /^马原/ }).first().click()
 await page.getByText('第一章', { exact: false }).first().waitFor({ timeout: 5000 })
 ok(`展开科目 → 章节列表（${Date.now() - openT}ms）`)
 await page.screenshot({ path: `${SHOTS}/04-section.png` })
@@ -82,11 +82,11 @@ await page.screenshot({ path: `${SHOTS}/05-quiz.png` })
 // 8. 作答判分
 const isMulti = await page.getByRole('button', { name: /确认答案|至少选两项/ }).count()
 if (isMulti) {
-  await page.locator('main button:has(span:text-is("A"))').first().click()
-  await page.locator('main button:has(span:text-is("B"))').first().click()
+  await page.getByRole('checkbox', { name: /^A/ }).first().click()
+  await page.getByRole('checkbox', { name: /^B/ }).first().click()
   await page.getByRole('button', { name: /确认答案/ }).click()
 } else {
-  await page.locator('main button:has(span:text-is("A"))').first().click()
+  await page.getByRole('radio', { name: /^A/ }).first().click()
 }
 await page.getByText(/回答正确|回答错误/).waitFor({ timeout: 3000 })
 await page.screenshot({ path: `${SHOTS}/06-answered.png` })

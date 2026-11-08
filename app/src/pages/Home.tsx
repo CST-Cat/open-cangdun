@@ -6,14 +6,16 @@ import {
   CrosshairIcon,
   GraduationCapIcon,
   LightningIcon,
-  TargetIcon,
   CheckCircleIcon,
   ChartBarIcon,
   BookBookmarkIcon,
   PuzzlePieceIcon,
 } from '@phosphor-icons/react'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
+import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '@/components/ui/item'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getSections, prefetchSections } from '@/lib/data'
 import { getLast, globalStat, useRecordsVersion } from '@/lib/progress'
@@ -21,19 +23,19 @@ import type { Sections } from '@/lib/types'
 
 // 四大分区（对应原小程序：强化题库/冲刺模拟/精选题库/专题模块）
 const SECTION_META = [
-  { key: 'qianghua', name: '强化题库', en: 'Intensive', icon: BooksIcon, cls: 'bg-[#3b7cf0]' },
-  { key: 'chongci', name: '冲刺模拟', en: 'Sprint', icon: LightningIcon, cls: 'bg-[#7c5cf0]' },
-  { key: 'jingxuan', name: '精选题库', en: 'Selection', icon: CrosshairIcon, cls: 'bg-[#2aa8a0]' },
-  { key: 'zhuanti', name: '专题模块', en: 'Topics', icon: PuzzlePieceIcon, cls: 'bg-[#34a853]' },
+  { key: 'qianghua', name: '强化题库', en: 'Intensive', icon: BooksIcon, cls: 'bg-[#3b7cf0] text-white' },
+  { key: 'chongci', name: '冲刺模拟', en: 'Sprint', icon: LightningIcon, cls: 'bg-[#7c5cf0] text-white' },
+  { key: 'jingxuan', name: '精选题库', en: 'Selection', icon: CrosshairIcon, cls: 'bg-[#2aa8a0] text-white' },
+  { key: 'zhuanti', name: '专题模块', en: 'Topics', icon: PuzzlePieceIcon, cls: 'bg-[#34a853] text-white' },
 ] as const
 
 function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <Card className="rounded-2xl border-border/70 bg-secondary/60 shadow-none">
-      <CardContent className="flex items-center gap-3 px-4 py-3">
-        <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+    <Card className="rounded-2xl border-border/70 bg-secondary/60 py-3 shadow-none">
+      <CardContent className="flex items-center gap-3 px-4">
+        <ItemMedia variant="icon" className="bg-primary/10 text-primary">
           {icon}
-        </div>
+        </ItemMedia>
         <div className="min-w-0">
           <div className="text-[17px] leading-tight font-semibold tabular-nums">{value}</div>
           <div className="text-xs text-muted-foreground">{label}</div>
@@ -77,8 +79,8 @@ export default function Home() {
       {/* 继续刷题 + 统计 */}
       <section className="space-y-3">
         {last && (
-          <Card className="rounded-2xl shadow-none">
-            <CardContent className="flex items-center justify-between gap-3 px-4 py-3">
+          <Card className="rounded-2xl py-3 shadow-none">
+            <CardContent className="flex items-center justify-between gap-3 px-4">
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                   <LightningIcon className="size-3.5 text-primary" weight="fill" />
@@ -118,14 +120,20 @@ export default function Home() {
       <section className="pt-7">
         <h2 className="mb-3 px-1 text-[21px] font-semibold tracking-tight">题库分区</h2>
         {error && (
-          <Card className="rounded-2xl shadow-none">
-            <CardContent className="flex flex-col items-center gap-3 py-8">
-              <p className="text-sm text-muted-foreground">分区加载失败</p>
+          <Empty className="rounded-2xl border py-12">
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <BooksIcon />
+              </EmptyMedia>
+              <EmptyTitle>分区加载失败</EmptyTitle>
+              <EmptyDescription>数据暂时无法获取，请重试</EmptyDescription>
+            </EmptyHeader>
+            <EmptyContent>
               <Button variant="outline" className="rounded-full" onClick={() => location.reload()}>
                 重试
               </Button>
-            </CardContent>
-          </Card>
+            </EmptyContent>
+          </Empty>
         )}
         {!sections && !error && (
           <div className="grid grid-cols-2 gap-3">
@@ -142,21 +150,23 @@ export default function Home() {
                   ? sections.chongci.reduce((s, g) => s + g.books.length, 0)
                   : (sections[key as keyof Sections] as unknown[]).length
               return (
-                <Link
-                  key={key}
-                  to={`/s/${key}`}
-                  onMouseEnter={prefetchSections}
-                  className={`${cls} relative overflow-hidden rounded-2xl p-4 text-white transition-transform active:scale-[0.98]`}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="text-[19px] leading-tight font-semibold tracking-tight">{name}</div>
-                    <Icon className="size-6 opacity-80" weight="duotone" />
-                  </div>
-                  <div className="mt-6 flex items-end justify-between">
-                    <span className="text-[13px] font-medium opacity-80 first-letter:text-[17px]">{en}</span>
-                    <span className="text-xs opacity-75 tabular-nums">{count} 项</span>
-                  </div>
-                  <div className="absolute inset-x-0 bottom-0 h-1 bg-white/30" />
+                <Link key={key} to={`/s/${key}`} className="block transition-transform active:scale-[0.98]">
+                  <Card className={`${cls} rounded-2xl border-0 py-4 shadow-none`}>
+                    <CardHeader>
+                      <div className="flex items-start justify-between">
+                        <CardTitle className="text-[19px] tracking-tight">{name}</CardTitle>
+                        <Icon className="size-6 opacity-80" weight="duotone" />
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <CardDescription className="flex items-end justify-between text-white/75">
+                        <span className="text-[13px] font-medium">{en}</span>
+                        <Badge variant="outline" className="border-white/30 bg-transparent text-white tabular-nums">
+                          {count} 项
+                        </Badge>
+                      </CardDescription>
+                    </CardContent>
+                  </Card>
                 </Link>
               )
             })}
@@ -165,26 +175,24 @@ export default function Home() {
 
         {/* 考点教材 */}
         {sections && (
-          <Link
-            to="/kd"
-            className="mt-3 flex items-center justify-between rounded-2xl border border-border/70 px-4 py-3.5 transition-colors hover:bg-secondary"
-          >
-            <div className="flex items-center gap-3">
-              <div className="flex size-9 items-center justify-center rounded-full bg-primary/10 text-primary">
+          <Item asChild variant="outline" className="mt-3 rounded-2xl">
+            <Link to="/kd">
+              <ItemMedia variant="icon" className="bg-primary/10 text-primary">
                 <BookBookmarkIcon className="size-5" weight="duotone" />
-              </div>
-              <div>
-                <div className="text-[15px] font-semibold">考点教材</div>
-                <div className="text-xs text-muted-foreground">484 个考点 · 教材内容整理</div>
-              </div>
-            </div>
-            <ArrowRightIcon className="size-4 text-muted-foreground" />
-          </Link>
+              </ItemMedia>
+              <ItemContent>
+                <ItemTitle className="text-[15px] font-semibold">考点教材</ItemTitle>
+                <ItemDescription>484 个考点 · 教材内容整理</ItemDescription>
+              </ItemContent>
+              <ItemActions>
+                <ArrowRightIcon className="size-4 text-muted-foreground" />
+              </ItemActions>
+            </Link>
+          </Item>
         )}
       </section>
 
       <footer className="pt-10 pb-2 text-center text-[11px] text-muted-foreground/70">
-        <TargetIcon className="mr-1 inline size-3" />
         数据仅供个人学习交流 · 来源苍盾题库
       </footer>
     </main>

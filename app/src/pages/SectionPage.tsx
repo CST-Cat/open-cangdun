@@ -1,71 +1,73 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeftIcon, ArrowRightIcon, WarningCircleIcon } from '@phosphor-icons/react'
+import { ArrowLeftIcon, ArrowRightIcon } from '@phosphor-icons/react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
+import { Item, ItemActions, ItemContent, ItemTitle } from '@/components/ui/item'
 import { Skeleton } from '@/components/ui/skeleton'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { getCatalog, getSections, getTikus, prefetchCatalog, prefetchChapter } from '@/lib/data'
 import { chapterStat, useRecordsVersion } from '@/lib/progress'
 import type { Book, Catalog, SectionEntry, Sections, Tikus } from '@/lib/types'
-import { cn } from '@/lib/utils'
 
-/** 章节行 */
-function ChapterRow({
-  id,
-  name,
-  count,
-  onClick,
+const SECTION_NAME: Record<string, string> = {
+  qianghua: '强化题库',
+  chongci: '冲刺模拟',
+  jingxuan: '精选题库',
+  zhuanti: '专题模块',
+}
+
+/** 章节列表：shadcn Item 行 */
+function ChapterList({
+  chapters,
+  onPick,
 }: {
-  id: string
-  name: string
-  count: number
-  onClick: () => void
+  chapters: { id: string; n: string; c: number }[]
+  onPick: (idx: number) => void
 }) {
-  const st = chapterStat(id)
-  const pct = count ? Math.round((st.answered / count) * 100) : 0
   return (
-    <button
-      onClick={onClick}
-      onMouseEnter={() => prefetchChapter(id)}
-      className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors hover:bg-secondary active:bg-secondary"
-    >
-      <div className="min-w-0 flex-1">
-        <div className="truncate text-[15px] leading-snug">{name}</div>
-        {st.answered > 0 && (
-          <div className="mt-1 flex items-center gap-1.5">
-            <div className="h-1 w-16 overflow-hidden rounded-full bg-muted">
-              <div className="h-full rounded-full bg-primary" style={{ width: `${pct}%` }} />
-            </div>
-            <span className="text-[11px] text-muted-foreground tabular-nums">
-              {st.answered}/{count}
-            </span>
-          </div>
-        )}
-      </div>
-      <Badge variant="secondary" className="shrink-0 tabular-nums">
-        {count} 题
-      </Badge>
-    </button>
+    <div className="grid gap-2">
+      {chapters.map((ch, i) => {
+        const st = chapterStat(ch.id)
+        const pct = ch.c ? Math.round((st.answered / ch.c) * 100) : 0
+        return (
+          <Item asChild key={ch.id} variant="outline" size="sm" className="rounded-xl">
+            <button type="button" onClick={() => onPick(i)} onMouseEnter={() => prefetchChapter(ch.id)}>
+              <ItemContent>
+                <ItemTitle className="truncate text-[14px] font-normal">{ch.n}</ItemTitle>
+                {st.answered > 0 && (
+                  <ItemTitle className="text-xs font-normal text-muted-foreground tabular-nums">
+                    已做 {st.answered}/{ch.c} · {pct}%
+                  </ItemTitle>
+                )}
+              </ItemContent>
+              <ItemActions>
+                <Badge variant="secondary" className="tabular-nums">{ch.c} 题</Badge>
+              </ItemActions>
+            </button>
+          </Item>
+        )
+      })}
+    </div>
   )
 }
 
-/** 一本书：科目 chips + 章节列表（普通渲染，无手风琴，杜绝裁剪） */
+/** 一本书：Card + ToggleGroup 科目 chips + Item 章节列表 */
 function BookCard({
   book,
-  displayName,
   tikuIdx,
-  onNavigate,
+  onPick,
 }: {
   book: Book
-  displayName?: string
   tikuIdx: Map<string, number>
-  onNavigate: (tiku: string, subj: string, ids: string[], sIdx: number) => void
+  onPick: (tiku: string, subj: string, ids: string[], sIdx: number) => void
 }) {
   const idx = tikuIdx.get(book.tiku)
   const [cata, setCata] = useState<Catalog | null>(null)
   const [failed, setFailed] = useState(false)
-  const [openSubj, setOpenSubj] = useState<string | null>(null)
+  const [openSubj, setOpenSubj] = useState<string>('')
 
   useEffect(() => {
     if (idx === undefined) return
@@ -80,98 +82,74 @@ function BookCard({
   }, [idx])
 
   const subjects = useMemo(() => Object.entries(cata ?? {}), [cata])
-  // 每个科目只有一章时直接平铺（如真题章节版），否则显示科目 chips
+  // 每个科目只有一章时直接平铺（如真题章节版），否则科目 chips 选择
   const flat = useMemo(() => {
     if (!cata) return null
     const entries = Object.entries(cata)
     if (entries.length > 1 && entries.every(([, l]) => l.length === 1)) {
-      return entries
-        .flatMap(([, l]) => l)
-        .sort((a, b) => Number(a.id) - Number(b.id))
+      return entries.flatMap(([, l]) => l).sort((a, b) => Number(a.id) - Number(b.id))
     }
     return null
   }, [cata])
 
-  const navigateTo = (subj: string, ids: string[], sIdx: number) =>
-    onNavigate(book.tiku, subj, ids, sIdx)
+  const pickFrom = (ids: string[], sIdx: number) => onPick(book.tiku, openSubj, ids, sIdx)
 
   return (
-    <Card className="rounded-2xl shadow-none" onMouseEnter={() => idx !== undefined && prefetchCatalog(idx)}>
-      <CardContent className="px-4 py-3.5">
-        <div className="flex items-center gap-2 pb-0.5">
-          <span className="size-1.5 rounded-full bg-primary" />
-          <h3 className="text-[16px] font-semibold tracking-tight">{displayName ?? book.name}</h3>
-        </div>
-
+    <Card className="rounded-2xl py-4 shadow-none" onMouseEnter={() => idx !== undefined && prefetchCatalog(idx)}>
+      <CardHeader className="px-4">
+        <CardTitle className="text-[16px] tracking-tight">{book.name}</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3 px-4">
         {failed && (
-          <p className="py-3 text-sm text-muted-foreground">目录加载失败</p>
+          <Empty className="border border-dashed rounded-xl py-6">
+            <EmptyHeader>
+              <EmptyTitle>目录加载失败</EmptyTitle>
+              <EmptyDescription>点击重试重新加载该书目录</EmptyDescription>
+            </EmptyHeader>
+            <EmptyContent>
+              <Button variant="outline" size="sm" className="rounded-full" onClick={() => idx !== undefined && getCatalog(idx).then(setCata).catch(() => {})}>
+                重试
+              </Button>
+            </EmptyContent>
+          </Empty>
         )}
+
         {!cata && !failed && (
-          <div className="mt-2.5 space-y-2">
+          <div className="space-y-2">
             <Skeleton className="h-9 w-full rounded-lg" />
             <Skeleton className="h-9 w-4/5 rounded-lg" />
           </div>
         )}
 
-        {cata && flat && (
-          <div className="mt-1.5 divide-y divide-border/40 overflow-hidden rounded-xl border border-border/60">
-            {flat.map((ch, i) => (
-              <ChapterRow
-                key={ch.id}
-                id={ch.id}
-                name={ch.n}
-                count={ch.c}
-                onClick={() => navigateTo('', flat.map((x) => x.id), i)}
-              />
-            ))}
-          </div>
-        )}
+        {cata && flat && <ChapterList chapters={flat} onPick={(i) => pickFrom(flat.map((x) => x.id), i)} />}
 
         {cata && !flat && (
           <>
-            <div className="mt-2.5 flex flex-wrap gap-1.5">
+            <ToggleGroup
+              type="single"
+              variant="outline"
+              className="flex-wrap"
+              value={openSubj}
+              onValueChange={(v) => setOpenSubj(v ?? '')}
+            >
               {subjects.map(([subj, chapters]) => (
-                <button
-                  key={subj}
-                  onClick={() => setOpenSubj(openSubj === subj ? null : subj)}
-                  onMouseEnter={() => prefetchChapter(chapters[0]?.id)}
-                  className={cn(
-                    'rounded-full border px-3 py-1.5 text-[13px] transition-colors',
-                    openSubj === subj
-                      ? 'border-primary bg-primary text-white'
-                      : 'border-border bg-background hover:border-primary/40 hover:bg-secondary',
-                  )}
-                >
+                <ToggleGroupItem key={subj} value={subj} onMouseEnter={() => prefetchChapter(chapters[0]?.id)}>
                   {subj}
-                  <span className="ml-1 opacity-60 tabular-nums">{chapters.length}</span>
-                </button>
+                  <Badge variant="secondary" className="ml-1 tabular-nums">{chapters.length}</Badge>
+                </ToggleGroupItem>
               ))}
-            </div>
+            </ToggleGroup>
             {openSubj && cata[openSubj] && (
-              <div className="mt-2.5 divide-y divide-border/40 overflow-hidden rounded-xl border border-border/60">
-                {cata[openSubj].map((ch, i) => (
-                  <ChapterRow
-                    key={ch.id}
-                    id={ch.id}
-                    name={ch.n}
-                    count={ch.c}
-                    onClick={() => navigateTo(openSubj, cata[openSubj].map((x) => x.id), i)}
-                  />
-                ))}
-              </div>
+              <ChapterList
+                chapters={cata[openSubj]}
+                onPick={(i) => pickFrom(cata[openSubj].map((x) => x.id), i)}
+              />
             )}
           </>
         )}
       </CardContent>
     </Card>
   )
-}
-
-const SECTION_NAME: Record<string, string> = {
-  qianghua: '强化题库',
-  chongci: '冲刺模拟',
-  jingxuan: '精选题库',
-  zhuanti: '专题模块',
 }
 
 export default function SectionPage() {
@@ -185,37 +163,27 @@ export default function SectionPage() {
   useEffect(() => {
     let alive = true
     Promise.all([getSections(), getTikus()])
-      .then(([s, t]) => {
-        if (alive) {
-          setSections(s)
-          setTikus(t)
-        }
-      })
+      .then(([s, t]) => alive && (setSections(s), setTikus(t)))
       .catch(() => alive && setFailed(true))
     return () => {
       alive = false
     }
   }, [])
 
-  const tikuIdx = useMemo(
-    () => new Map((tikus ?? []).map((n, i) => [n, i])),
-    [tikus],
-  )
+  const tikuIdx = useMemo(() => new Map((tikus ?? []).map((n, i) => [n, i])), [tikus])
 
-  const onNavigate = (tiku: string, subj: string, ids: string[], sIdx: number) =>
+  const onPick = (tiku: string, subj: string, ids: string[], sIdx: number) =>
     navigate(`/ch/${ids[sIdx]}`, { state: { tiku, subj, siblings: ids, sIdx } })
 
-  const entriesOf = (key: string): SectionEntry[] => {
+  const entriesOf = (k: string): SectionEntry[] => {
     if (!sections) return []
-    if (key === 'qianghua') return sections.qianghua as SectionEntry[]
-    if (key === 'jingxuan') return sections.jingxuan
-    if (key === 'zhuanti') return sections.zhuanti
+    if (k === 'qianghua') return sections.qianghua as SectionEntry[]
+    if (k === 'jingxuan') return sections.jingxuan
+    if (k === 'zhuanti') return sections.zhuanti
     return []
   }
 
-  const renderBook = (b: Book, display?: string) => (
-    <BookCard key={b.tiku + (b.subject ?? '')} book={b} displayName={display} tikuIdx={tikuIdx} onNavigate={onNavigate} />
-  )
+  const renderBook = (b: Book) => <BookCard key={b.tiku + (b.subject ?? '')} book={b} tikuIdx={tikuIdx} onPick={onPick} />
 
   return (
     <main className="mx-auto w-full max-w-2xl px-4 pb-24">
@@ -226,22 +194,22 @@ export default function SectionPage() {
               <ArrowLeftIcon className="size-4" />
             </Link>
           </Button>
-          <div className="text-[17px] font-semibold tracking-tight">
-            {SECTION_NAME[key] ?? '题库'}
-          </div>
+          <div className="text-[17px] font-semibold tracking-tight">{SECTION_NAME[key] ?? '题库'}</div>
         </div>
       </div>
 
       {failed && (
-        <Card className="rounded-2xl shadow-none">
-          <CardContent className="flex flex-col items-center gap-3 py-10">
-            <WarningCircleIcon className="size-8 text-destructive" />
-            <p className="text-sm text-muted-foreground">加载失败</p>
+        <Empty className="rounded-2xl border py-12">
+          <EmptyHeader>
+            <EmptyTitle>加载失败</EmptyTitle>
+            <EmptyDescription>分区数据暂时无法获取</EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
             <Button variant="outline" className="rounded-full" onClick={() => location.reload()}>
               重试
             </Button>
-          </CardContent>
-        </Card>
+          </EmptyContent>
+        </Empty>
       )}
 
       {!sections && !failed && (
@@ -258,31 +226,32 @@ export default function SectionPage() {
             ? sections.chongci.map((g) => (
                 <div key={g.group} className="space-y-3">
                   <h2 className="px-1 pt-1 text-[15px] font-semibold text-muted-foreground">{g.group}</h2>
-                  {g.books.map((b) => renderBook(b))}
+                  {g.books.map(renderBook)}
                 </div>
               ))
             : entriesOf(key).map((e) => {
                 if ('href' in e) {
                   return (
-                    <Link
-                      key={e.name}
-                      to={e.href}
-                      className="flex items-center justify-between rounded-2xl border border-border/70 px-4 py-3.5 transition-colors hover:bg-secondary"
-                    >
-                      <div className="text-[15px] font-semibold">{e.name}</div>
-                      <ArrowRightIcon className="size-4 text-muted-foreground" />
-                    </Link>
+                    <Item asChild key={e.name} variant="outline" className="rounded-2xl">
+                      <Link to={e.href}>
+                        <ItemContent>
+                          <ItemTitle className="text-[15px] font-semibold">{e.name}</ItemTitle>
+                        </ItemContent>
+                        <ItemActions>
+                          <ArrowRightIcon className="size-4 text-muted-foreground" />
+                        </ItemActions>
+                      </Link>
+                    </Item>
                   )
                 }
                 if ('multi' in e) {
                   return (
-                    <Card key={e.name} className="rounded-2xl shadow-none">
-                      <CardContent className="space-y-3 px-4 py-3.5">
-                        <div className="flex items-center gap-2">
-                          <span className="size-1.5 rounded-full bg-primary" />
-                          <h3 className="text-[16px] font-semibold tracking-tight">{e.name}</h3>
-                        </div>
-                        {e.multi.map((b) => renderBook(b))}
+                    <Card key={e.name} className="rounded-2xl py-4 shadow-none">
+                      <CardHeader className="px-4">
+                        <CardTitle className="text-[16px] tracking-tight">{e.name}</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-3 px-4">
+                        {e.multi.map(renderBook)}
                       </CardContent>
                     </Card>
                   )

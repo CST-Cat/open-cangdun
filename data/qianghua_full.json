@@ -1,0 +1,478 @@
+{
+ "code": 0,
+ "xiao1000_tlevel_id": 1360,
+ "xiao1084_jump": "2",
+ "jump_appid": "wx4669e12610101b43",
+ "list": [
+  {
+   "title": "27余峰500题",
+   "free": "2",
+   "p_level_id": "7116",
+   "childLevel": [
+    {
+     "tlevel_id": "7117",
+     "name": "马原",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "7118",
+     "name": "毛中特",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "7119",
+     "name": "新思想",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "7120",
+     "name": "史纲",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "7121",
+     "name": "思修",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "7134",
+     "name": "模拟测试两套卷",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    }
+   ]
+  },
+  {
+   "title": "27腿姐刷题计划",
+   "free": "2",
+   "p_level_id": "6699",
+   "childLevel": [
+    {
+     "tlevel_id": "6700",
+     "name": "马原",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6701",
+     "name": "毛中特",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6702",
+     "name": "新思想",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6703",
+     "name": "史纲",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6704",
+     "name": "思修",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    }
+   ]
+  },
+  {
+   "title": "27杨攀660题",
+   "free": "2",
+   "p_level_id": "7354",
+   "childLevel": [
+    {
+     "tlevel_id": "7355",
+     "name": "马原",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "7356",
+     "name": "史纲",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "7357",
+     "name": "毛中特",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "7358",
+     "name": "新思想",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "7359",
+     "name": "思修",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    }
+   ]
+  },
+  {
+   "title": "27苏一300题",
+   "free": "2",
+   "p_level_id": "8523",
+   "childLevel": [
+    {
+     "tlevel_id": "8524",
+     "name": "马原",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "8525",
+     "name": "毛中特",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "8526",
+     "name": "新思想",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "8527",
+     "name": "史纲",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "8528",
+     "name": "思修",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "8577",
+     "name": "真题高频命题点",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    }
+   ]
+  },
+  {
+   "title": "27米鹏1000题",
+   "free": "2",
+   "p_level_id": "6839",
+   "childLevel": [
+    {
+     "tlevel_id": "6840",
+     "name": "马原",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6841",
+     "name": "毛中特",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6842",
+     "name": "新思想",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6843",
+     "name": "史纲",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6844",
+     "name": "思修",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "8711",
+     "name": "背诵手册试题预测",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    }
+   ]
+  },
+  {
+   "title": "27徐涛优题库-基础题",
+   "free": "2",
+   "p_level_id": "6755",
+   "childLevel": [
+    {
+     "tlevel_id": "6757",
+     "name": "马原",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6767",
+     "name": "毛中特",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6777",
+     "name": "新思想",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6794",
+     "name": "史纲",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6805",
+     "name": "思修",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    }
+   ]
+  },
+  {
+   "title": "27徐涛优题库-拔高题",
+   "free": "2",
+   "p_level_id": "6756",
+   "childLevel": [
+    {
+     "tlevel_id": "6813",
+     "name": "马原",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6820",
+     "name": "毛中特",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6823",
+     "name": "新思想",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6829",
+     "name": "史纲",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6835",
+     "name": "思修",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "name": "27徐涛10套卷",
+     "notice": "",
+     "notice_title": "",
+     "tlevel_id": "8512"
+    }
+   ]
+  },
+  {
+   "title": "27米鹏大李子720题",
+   "free": "2",
+   "p_level_id": "7237",
+   "childLevel": [
+    {
+     "tlevel_id": "7238",
+     "name": "马原",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "7239",
+     "name": "毛中特",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "7240",
+     "name": "新思想",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "7241",
+     "name": "史纲",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "7242",
+     "name": "思修",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    }
+   ]
+  },
+  {
+   "title": "27版肖1000题",
+   "free": "2",
+   "p_level_id": "6896",
+   "childLevel": [
+    {
+     "tlevel_id": "6897",
+     "name": "马原",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6898",
+     "name": "毛中特",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6899",
+     "name": "新思想",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6900",
+     "name": "史纲",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6901",
+     "name": "思修",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "8509",
+     "name": "190题",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    }
+   ]
+  },
+  {
+   "title": "27苏一800题",
+   "free": "1",
+   "p_level_id": "7294",
+   "childLevel": [
+    {
+     "tlevel_id": "7295",
+     "name": "马原",
+     "notice": null,
+     "notice_title": null,
+     "free": "1"
+    },
+    {
+     "tlevel_id": "7296",
+     "name": "毛中特",
+     "notice": null,
+     "notice_title": null,
+     "free": "1"
+    },
+    {
+     "tlevel_id": "7297",
+     "name": "新思想",
+     "notice": null,
+     "notice_title": null,
+     "free": "1"
+    },
+    {
+     "tlevel_id": "7298",
+     "name": "史纲",
+     "notice": null,
+     "notice_title": null,
+     "free": "1"
+    },
+    {
+     "tlevel_id": "7299",
+     "name": "思修",
+     "notice": null,
+     "notice_title": null,
+     "free": "1"
+    }
+   ]
+  }
+ ],
+ "hexing": "1",
+ "level_default": [
+  "7116",
+  "6699",
+  "7354",
+  "8523",
+  "6839",
+  "6755",
+  "6756",
+  "7237",
+  "6896",
+  "7294"
+ ],
+ "qianghua_setting": 10,
+ "msg": "获取成功",
+ "xiao100": []
+}

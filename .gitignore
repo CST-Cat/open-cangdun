@@ -1,0 +1,25 @@
+# ===== 凭证与个人信息（绝对禁止入库）=====
+credentials/
+*.flow
+*.flow.bak
+
+# ===== 微信/小程序原始缓存（含个人数据副本）=====
+mmkv/
+
+# ===== 逆向产物（专有代码解包结果，不宜公开）=====
+extracted/
+wxapkg_src/
+wxapkg_dec/
+
+# ===== 系统杂项 =====
+.DS_Store
+*/.DS_Store
+Thumbs.db
+
+# ===== 临时/日志 =====
+*.log
+*.pid
+nohup.out
+
+# 超过 GitHub 100MB 单文件限制，用 scripts/build_db.py 从 questions.jsonl 重建
+data/cangdun.db

@@ -1,0 +1,227 @@
+{
+ "code": 0,
+ "xiao8_tlevel_id": 1791,
+ "xiao4_tlevel_id": 1792,
+ "xiao1084_jump": "2",
+ "jump_appid": "wx4669e12610101b43",
+ "list": [
+  {
+   "free": "2",
+   "title": "27版冲刺押题库（不断更新）",
+   "p_level_id": "6469",
+   "childLevel": [
+    {
+     "tlevel_id": "8592",
+     "name": "27腿姐8套卷（已更新）",
+     "notice": null,
+     "notice_title": "温馨提示",
+     "free": "2"
+    },
+    {
+     "tlevel_id": "8512",
+     "name": "27徐涛10套卷（已更新）",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "8585",
+     "name": "27米鹏6套卷（已更新）",
+     "notice": null,
+     "notice_title": "温馨提示",
+     "free": "2"
+    },
+    {
+     "tlevel_id": "8588",
+     "name": "27余峰6套卷（陆续更新）",
+     "notice": null,
+     "notice_title": "温馨提示",
+     "free": "2"
+    },
+    {
+     "tlevel_id": "8593",
+     "name": "27腿姐4套卷",
+     "notice": "<p>教材出版后2--3天更新！</p>",
+     "notice_title": "温馨提示",
+     "free": "2"
+    },
+    {
+     "tlevel_id": "8589",
+     "name": "27杨攀5套卷",
+     "notice": "<p>教材出版后2--3天更新！</p>",
+     "notice_title": "温馨提示",
+     "free": "2"
+    },
+    {
+     "tlevel_id": "8590",
+     "name": "27张修齐3套卷",
+     "notice": "<p>教材出版后2--3天更新！</p>",
+     "notice_title": "温馨提示",
+     "free": "2"
+    },
+    {
+     "tlevel_id": "8591",
+     "name": "27苏一3套卷",
+     "notice": "<p>教材出版后2--3天更新！</p>",
+     "notice_title": "温馨提示",
+     "free": "2"
+    },
+    {
+     "tlevel_id": "8586",
+     "name": "27米鹏3套卷",
+     "notice": "<p>教材出版后2--3天更新！</p>",
+     "notice_title": "温馨提示",
+     "free": "2"
+    },
+    {
+     "tlevel_id": "8587",
+     "name": "27余峰4套卷",
+     "notice": "<p>教材出版后2--3天更新！</p>",
+     "notice_title": "温馨提示",
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6471",
+     "name": "27肖4",
+     "notice": "<p>教材出版后2--3天更新！</p>",
+     "notice_title": "温馨提示",
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6470",
+     "name": "27肖8",
+     "notice": "<p>教材出版后2--3天更新！</p>",
+     "notice_title": "温馨提示",
+     "free": "2"
+    },
+    {
+     "tlevel_id": "8595",
+     "name": "27徐涛3套卷",
+     "notice": "<p>教材出版后2--3天更新！</p>",
+     "notice_title": "温馨提示",
+     "free": "2"
+    },
+    {
+     "tlevel_id": "8594",
+     "name": "其他更多名师模考",
+     "notice": "<p>教材出版后2--3天更新！</p>",
+     "notice_title": "温馨提示",
+     "free": "2"
+    }
+   ]
+  },
+  {
+   "free": "2",
+   "title": "26版冲刺押题库",
+   "p_level_id": "4906",
+   "childLevel": [
+    {
+     "tlevel_id": "6261",
+     "name": "26米鹏3套卷（已更新）",
+     "notice": null,
+     "notice_title": "温馨提示",
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6264",
+     "name": "26腿姐4套卷（已更新）",
+     "notice": null,
+     "notice_title": "温馨提示",
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6266",
+     "name": "26余峰4套卷（已更新）",
+     "notice": null,
+     "notice_title": "温馨提示",
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6460",
+     "name": "26杨攀5套卷（已更新）",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6493",
+     "name": "26张修齐3套卷（已更新）",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6553",
+     "name": "26苏一3套卷（已更新）",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6262",
+     "name": "26徐涛3套卷（已更新）",
+     "notice": null,
+     "notice_title": "温馨提示",
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6265",
+     "name": "26余峰6套卷（已更新）",
+     "notice": null,
+     "notice_title": "温馨提示",
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6453",
+     "name": "26苏一6套卷（已更新）",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6260",
+     "name": "26米鹏6套卷（已更新）",
+     "notice": null,
+     "notice_title": "温馨提示",
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6263",
+     "name": "26腿姐8套卷（已更新）",
+     "notice": null,
+     "notice_title": "温馨提示",
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6258",
+     "name": "26肖8（已更新）",
+     "notice": null,
+     "notice_title": "温馨提示",
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6269",
+     "name": "26徐涛核心模拟题（已更新）",
+     "notice": null,
+     "notice_title": "温馨提示",
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6438",
+     "name": "26肖形势与政策（已更新）",
+     "notice": null,
+     "notice_title": null,
+     "free": "2"
+    },
+    {
+     "tlevel_id": "6259",
+     "name": "26肖4（已更新）",
+     "notice": null,
+     "notice_title": "温馨提示",
+     "free": "2"
+    }
+   ]
+  }
+ ],
+ "msg": "获取成功"
+}

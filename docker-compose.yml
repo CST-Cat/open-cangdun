@@ -6,8 +6,8 @@ services:
     ports:
       - "37080:80"
     volumes:
-      # 账密与会话密钥持久化（跨重启/重建保留）——部署生成的账密存放在仓库之外的私有路径，与 repo 路径无关
-      - /home/ubuntu/.config/cangdun/auth:/config
+      # 账密与会话密钥持久化（跨重启/重建保留）——部署生成的账密存 Docker 命名卷，与 repo 路径、部署者用户名都无关
+      - cangdun-auth:/config
     environment:
       # 可选：固定账密（不设则首次启动随机生成，docker logs cangdun 查看）
       # - ADMIN_USERNAME=myname
@@ -16,6 +16,9 @@ services:
     restart: unless-stopped
     networks:
       - cangdun-net
+
+volumes:
+  cangdun-auth:
 
 # 与 cloudflared 容器共享的网络：隧道 ingress 直连 http://cangdun:80
 # （不依赖宿主防火墙；若 cloudflared 容器被重建，执行 docker network connect cangdun-net cloudflared）

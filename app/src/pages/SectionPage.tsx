@@ -369,7 +369,7 @@ function WideBookPanel({
   const pickFrom = (ids: string[], sIdx: number) => onPick(book.tiku, openSubj, ids, sIdx)
 
   return (
-    <section className="rounded-xl border border-border/70 bg-card p-5">
+    <section className="rounded-xl border border-border/70 bg-secondary p-5">
       <div className="flex flex-wrap items-baseline gap-3">
         <h2 className="font-display text-[22px] font-normal tracking-tight">{book.name}</h2>
         {bookProg && bookProg.total > 0 && (
@@ -503,7 +503,7 @@ function WideSection({
       </div>
 
       <div className="mt-5 grid grid-cols-[minmax(0,1fr)_320px] items-start gap-8">
-        <div className="order-2 sticky top-6 max-h-[calc(100vh-120px)] space-y-0.5 overflow-y-auto rounded-xl border border-border/70 bg-card p-2">
+        <div className="order-2 sticky top-6 max-h-[calc(100vh-120px)] space-y-0.5 overflow-y-auto rounded-xl border border-border/70 bg-secondary p-2">
           {visible.map((e) => {
             if (!e.book && !e.href) {
               return (
@@ -517,7 +517,7 @@ function WideSection({
                 <Link
                   key={e.id}
                   to={e.href}
-                  className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-[14px] text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                  className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-[14px] text-muted-foreground transition-colors hover:bg-card/70 hover:text-foreground"
                 >
                   <span className="min-w-0 flex-1 truncate">{e.name}</span>
                   <ArrowRightIcon className="size-3.5 shrink-0" />
@@ -532,7 +532,7 @@ function WideSection({
                 onClick={() => setActiveId(e.id)}
                 className={cn(
                   'flex w-full items-center rounded-lg px-2.5 py-2 text-left text-[14px] transition-colors',
-                  isActive ? 'bg-secondary font-medium text-foreground' : 'text-muted-foreground hover:bg-secondary/70 hover:text-foreground',
+                  isActive ? 'bg-card font-medium text-foreground shadow-sm' : 'text-muted-foreground hover:bg-card/60 hover:text-foreground',
                 )}
               >
                 <span className="min-w-0 flex-1 truncate">{e.name}</span>

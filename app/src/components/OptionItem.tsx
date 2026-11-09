@@ -29,8 +29,8 @@ export function OptionItem({
       aria-pressed={state === 'picked' || state === 'correct' || state === 'wrong'}
       className={cn(
         'flex w-full items-start gap-3 rounded-xl border px-3.5 py-3 text-left transition-colors',
-        state === 'idle' && 'border-border bg-secondary/50 hover:border-primary/60 hover:bg-secondary',
-        state === 'picked' && 'border-primary bg-primary/10',
+        state === 'idle' && 'border-border bg-secondary/50 hover:border-foreground/35 hover:bg-secondary',
+        state === 'picked' && 'border-foreground/60 bg-secondary',
         state === 'correct' && 'border-success/70 bg-success/10',
         state === 'wrong' && 'border-destructive/70 bg-destructive/10',
         state === 'dim' && 'border-border bg-secondary/30 opacity-45',

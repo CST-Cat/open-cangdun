@@ -422,7 +422,7 @@ export default function Quiz() {
                         !rec && 'border-border bg-background',
                         rec?.[1] === 1 && 'border-success/60 bg-success/15 text-success',
                         rec?.[1] === 0 && 'border-destructive/60 bg-destructive/15 text-destructive',
-                        i === qIdx && 'ring-2 ring-primary ring-offset-1',
+                        i === qIdx && 'ring-2 ring-foreground/70 ring-offset-1',
                       )}
                     >
                       {i + 1}
@@ -452,10 +452,10 @@ export default function Quiz() {
                     onClick={() => go(i)}
                     className={cn(
                       'flex h-8 items-center justify-center rounded-md border text-[13px] tabular-nums transition-colors',
-                      !rec && 'border-border bg-background hover:border-primary/50',
+                      !rec && 'border-border bg-background hover:border-foreground/40',
                       rec?.[1] === 1 && 'border-success/60 bg-success/15 text-success',
                       rec?.[1] === 0 && 'border-destructive/60 bg-destructive/15 text-destructive',
-                      i === qIdx && 'ring-2 ring-primary ring-offset-1',
+                      i === qIdx && 'ring-2 ring-foreground/70 ring-offset-1',
                     )}
                   >
                     {i + 1}

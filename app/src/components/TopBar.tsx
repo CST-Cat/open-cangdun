@@ -58,7 +58,7 @@ export default function TopBar() {
   }
 
   return (
-    <header className="sticky top-0 z-50 bg-[#181715]">
+    <header className="sticky top-0 z-50 bg-[#141413]">
       <div className="mx-auto flex h-11 max-w-3xl items-center justify-between px-4">
         <Button asChild variant="ghost" size="sm" className="font-display gap-2 rounded-lg px-2 text-[15px] font-normal tracking-tight text-white">
           <Link to="/">

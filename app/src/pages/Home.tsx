@@ -120,33 +120,33 @@ export default function Home() {
 
   // ---------- 共用块 ----------
   const overview = (
-    <section className="rounded-xl border border-border/70 bg-card px-4 py-4">
+    <section className="rounded-xl bg-[#141413] px-4 py-4 text-[#faf9f5] shadow-sm dark:bg-[#f0eee6] dark:text-[#141413]">
       <div className="grid grid-cols-3 gap-3">
         <div>
-          <div className="text-[20px] leading-tight font-semibold tabular-nums">{today.answered}</div>
-          <div className="mt-0.5 text-xs text-muted-foreground">
+          <div className="font-display text-[24px] leading-tight font-medium tabular-nums">{today.answered}</div>
+          <div className="mt-0.5 text-xs text-white/55 dark:text-black/55">
             今日答题{today.answered > 0 && <> · 对 {Math.round((today.correct / today.answered) * 100)}%</>}
           </div>
         </div>
         <div>
-          <div className="text-[20px] leading-tight font-semibold tabular-nums">{stats.answered}</div>
-          <div className="mt-0.5 text-xs text-muted-foreground">
+          <div className="font-display text-[24px] leading-tight font-medium tabular-nums">{stats.answered}</div>
+          <div className="mt-0.5 text-xs text-white/55 dark:text-black/55">
             累计答题{stats.answered > 0 && <> · 对 {Math.round((stats.correct / stats.answered) * 100)}%</>}
           </div>
         </div>
         <div>
-          <div className="text-[20px] leading-tight font-semibold tabular-nums">{stats.chapters}</div>
-          <div className="mt-0.5 text-xs text-muted-foreground">已刷章节</div>
+          <div className="font-display text-[24px] leading-tight font-medium tabular-nums">{stats.chapters}</div>
+          <div className="mt-0.5 text-xs text-white/55 dark:text-black/55">已刷章节</div>
         </div>
       </div>
-      <div className="mt-3.5 border-t border-border/60 pt-3">
-        <div className="flex items-baseline justify-between text-xs text-muted-foreground">
+      <div className="mt-3.5 border-t border-white/15 pt-3 dark:border-black/10">
+        <div className="flex items-baseline justify-between text-xs text-white/55 dark:text-black/55">
           <span>全题库进度</span>
           <span className="tabular-nums">
             {stats.answered} / {TOTAL_QUESTIONS.toLocaleString()} · {overallPct}%
           </span>
         </div>
-        <Progress value={overallPct} className="mt-1.5 h-1.5" />
+        <Progress value={overallPct} className="mt-1.5 h-1.5 bg-white/15 [&>div]:bg-[#faf9f5]/85 dark:bg-black/10 dark:[&>div]:bg-[#141413]/85" />
       </div>
     </section>
   )
@@ -172,18 +172,18 @@ export default function Home() {
   const wrongRow = wrong.wrong > 0 && (
     <Link
       to="/wrong"
-      className="flex items-center gap-3 rounded-xl border border-border/70 bg-card px-4 py-3.5 transition-transform active:scale-[0.99]"
+      className="flex items-center gap-3 rounded-xl border border-border/70 bg-card px-4 py-3.5 shadow-sm transition-transform active:scale-[0.99]"
     >
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-secondary text-muted-foreground">
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-secondary text-foreground/75 shadow-sm dark:bg-accent">
         <XCircleIcon className="size-5.5" weight="duotone" />
       </span>
       <div className="min-w-0 flex-1">
         <div className="text-[15px] font-medium">错题本</div>
-        <div className="text-[13px] text-muted-foreground tabular-nums">
+        <div className="text-[13px] text-foreground/65 tabular-nums">
           {wrong.wrong} 道待订正 · 分布在 {wrong.chapters} 章
         </div>
       </div>
-      <ArrowRightIcon className="size-4 shrink-0 text-muted-foreground" />
+      <ArrowRightIcon className="size-4 shrink-0 text-foreground/45" />
     </Link>
   )
 
@@ -220,21 +220,21 @@ export default function Home() {
       <Link
         key={key}
         to={`/s/${key}`}
-        className="flex items-center gap-3 rounded-xl border border-border/70 bg-card px-4 py-3.5 transition-transform active:scale-[0.99]"
+        className="flex items-center gap-3 rounded-xl border border-border/70 bg-card px-4 py-3.5 shadow-sm transition-transform active:scale-[0.99]"
       >
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-secondary text-muted-foreground">
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-secondary text-foreground/75 shadow-sm dark:bg-accent">
           <Icon className="size-5.5" weight="duotone" />
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline gap-2">
             <span className="text-[16px] font-medium">{name}</span>
-            <span className="text-xs text-muted-foreground">{en}</span>
-            <span className="ml-auto text-xs text-muted-foreground tabular-nums">{sections && countOf(sections, key)} 项</span>
+            <span className="text-xs text-foreground/55">{en}</span>
+            <span className="ml-auto text-xs text-foreground/55 tabular-nums">{sections && countOf(sections, key)} 项</span>
           </div>
           {prog && prog.total > 0 ? (
             <div className="mt-2 flex items-center gap-2">
               <Progress value={pct} className="h-1 flex-1" />
-              <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
+              <span className="shrink-0 text-xs text-foreground/60 tabular-nums">
                 {prog.answered}/{prog.total.toLocaleString()} · {pct}%
               </span>
             </div>
@@ -242,7 +242,7 @@ export default function Home() {
             <div className="mt-2 h-1" />
           )}
         </div>
-        <ArrowRightIcon className="size-4 shrink-0 text-muted-foreground" />
+        <ArrowRightIcon className="size-4 shrink-0 text-foreground/45" />
       </Link>
     )
   }
@@ -255,28 +255,28 @@ export default function Home() {
       <Link
         key={key}
         to={`/s/${key}`}
-        className="group flex min-h-32 flex-col rounded-xl border border-border/70 bg-card p-4 transition-colors hover:border-primary/50"
+        className="group flex min-h-32 flex-col rounded-xl border border-border/70 bg-card p-4 shadow-sm transition-colors hover:border-foreground/30"
       >
         <div className="flex items-start justify-between">
-          <span className="flex size-10 items-center justify-center rounded-lg bg-secondary text-muted-foreground">
+          <span className="flex size-10 items-center justify-center rounded-lg bg-secondary text-foreground/75 shadow-sm dark:bg-accent">
             <Icon className="size-5.5" weight="duotone" />
           </span>
-          <span className="text-xs text-muted-foreground tabular-nums">{sections && countOf(sections, key)} 项</span>
+          <span className="text-xs text-foreground/55 tabular-nums">{sections && countOf(sections, key)} 项</span>
         </div>
         <div className="mt-3 flex items-baseline gap-2">
-          <span className="text-[17px] font-medium">{name}</span>
-          <span className="text-xs text-muted-foreground">{en}</span>
+          <span className="font-display text-[18px] font-normal">{name}</span>
+          <span className="text-xs text-foreground/55">{en}</span>
         </div>
         <div className="mt-auto pt-3">
           {prog && prog.total > 0 ? (
             <>
               <Progress value={pct} className="h-1" />
-              <div className="mt-1.5 text-xs text-muted-foreground tabular-nums">
+              <div className="mt-1.5 text-xs text-foreground/65 tabular-nums">
                 已答 {prog.answered} / {prog.total.toLocaleString()} · {pct}%
               </div>
             </>
           ) : (
-            <div className="text-xs text-muted-foreground">进度统计中…</div>
+            <div className="text-xs text-foreground/55">进度统计中…</div>
           )}
         </div>
       </Link>
@@ -286,21 +286,21 @@ export default function Home() {
   const kaodianRow = (
     <Link
       to="/kd"
-      className="flex items-center gap-3 rounded-xl border border-border/70 bg-card px-4 py-3.5 transition-transform active:scale-[0.99]"
+      className="flex items-center gap-3 rounded-xl border border-border/70 bg-card px-4 py-3.5 shadow-sm transition-transform active:scale-[0.99]"
     >
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-secondary text-muted-foreground">
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-secondary text-foreground/75 shadow-sm dark:bg-accent">
         <BookBookmarkIcon className="size-5.5" weight="duotone" />
       </span>
       <div className="min-w-0 flex-1">
         <div className="text-[16px] font-medium">考点教材</div>
-        <div className="text-[13px] text-muted-foreground">484 个考点 · 教材内容整理</div>
+        <div className="text-[13px] text-foreground/65">484 个考点 · 教材内容整理</div>
       </div>
-      <ArrowRightIcon className="size-4 shrink-0 text-muted-foreground" />
+      <ArrowRightIcon className="size-4 shrink-0 text-foreground/45" />
     </Link>
   )
 
   const footer = (
-    <footer className="pt-10 pb-2 text-center text-xs text-muted-foreground/70">
+    <footer className="pt-10 pb-2 text-center text-xs text-foreground/55/70">
       数据仅供个人学习交流 · 来源苍盾题库
     </footer>
   )
@@ -316,7 +316,7 @@ export default function Home() {
           </div>
           <div className="shrink-0 text-right">
             <div className="font-display text-[40px] leading-none font-normal tabular-nums">{days}</div>
-            <div className="mt-1 text-xs text-muted-foreground">距初试（天）</div>
+            <div className="mt-1 text-xs text-foreground/55">距初试（天）</div>
           </div>
         </section>
 
@@ -356,7 +356,7 @@ export default function Home() {
         </div>
         <div className="shrink-0 text-right">
           <div className="font-display text-[34px] leading-none font-normal tabular-nums">{days}</div>
-          <div className="mt-1 text-xs text-muted-foreground">距初试（天）</div>
+          <div className="mt-1 text-xs text-foreground/55">距初试（天）</div>
         </div>
       </section>
 

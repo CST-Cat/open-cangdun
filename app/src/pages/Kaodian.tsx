@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
 import { BookOpenIcon, MagnifyingGlassIcon, WarningCircleIcon } from '@phosphor-icons/react'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -75,7 +74,7 @@ export default function Kaodian() {
             <EmptyTitle>内容加载失败</EmptyTitle>
           </EmptyHeader>
           <EmptyContent>
-            <Button variant="outline" className="rounded-full" onClick={() => active && openDetail(active.item)}>
+            <Button variant="outline" onClick={() => active && openDetail(active.item)}>
               重试
             </Button>
           </EmptyContent>
@@ -95,9 +94,7 @@ export default function Kaodian() {
           ) : (
             <div className="prose-cd max-w-[72ch] text-[16px] leading-[1.85]" dangerouslySetInnerHTML={{ __html: cleanHTML(detail.h) }} />
           )}
-          <Badge variant="secondary" className="mt-3 rounded-full">
-            考点 ID {active?.item.i}
-          </Badge>
+          <p className="mt-3 text-xs text-muted-foreground tabular-nums">考点 ID {active?.item.i}</p>
         </div>
       )}
     </>
@@ -117,8 +114,8 @@ export default function Kaodian() {
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="搜索考点，如：物质、矛盾、剩余价值…"
-            className="h-11 rounded-full pl-10"
+            placeholder="搜索考点"
+            className="h-11 pl-10"
           />
         </div>
       </div>
@@ -133,7 +130,7 @@ export default function Kaodian() {
             <EmptyDescription>数据暂时无法获取</EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
-            <Button variant="outline" className="rounded-full" onClick={() => location.reload()}>
+            <Button variant="outline" onClick={() => location.reload()}>
               重试
             </Button>
           </EmptyContent>
@@ -171,7 +168,7 @@ export default function Kaodian() {
                       <ItemTitle className="w-full min-w-0 text-[14px] font-normal"><span className="min-w-0 flex-1 truncate">{item.t}</span></ItemTitle>
                     </ItemContent>
                     <ItemActions className="shrink-0">
-                      <Badge variant="secondary" className="tabular-nums">#{i + 1}</Badge>
+                      <span className="text-xs text-muted-foreground tabular-nums">#{i + 1}</span>
                     </ItemActions>
                   </button>
                 </Item>

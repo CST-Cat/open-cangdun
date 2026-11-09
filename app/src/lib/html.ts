@@ -18,10 +18,17 @@ DOMPurify.addHook('uponSanitizeElement', (node, data) => {
 
 export function cleanHTML(html: string): string {
   if (!html) return ''
-  return DOMPurify.sanitize(html, {
+  // 教材是 Word 导出 HTML：内联样式带着青底/绿框/宋体，会把原文档的排版漏进产品。
+  // 净化前先把「红字重点」标记出来（其余内联样式一律剥掉，呈现交给 .prose-cd）
+  const marked = html.replace(/style="([^"]*)"/gi, (m, s) =>
+    /color:\s*(#ff0000|rgb\(255,\s*0,\s*0\)|red)\b/i.test(s) ? 'data-red="1"' : m,
+  )
+  const out = DOMPurify.sanitize(marked, {
     USE_PROFILES: { html: true },
     FORBID_TAGS: ['style', 'form', 'input', 'button', 'video', 'audio', 'iframe', 'script'],
-    FORBID_ATTR: ['class', 'id'],
+    FORBID_ATTR: ['class', 'id', 'style'],
+    ADD_ATTR: ['data-red'],
     ALLOW_DATA_ATTR: false,
   })
+  return out.replaceAll('data-red="1"', 'class="kd-red"')
 }

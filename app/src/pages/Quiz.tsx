@@ -5,9 +5,9 @@ import {
   ArrowRightIcon,
   CaretLeftIcon,
   CaretRightIcon,
-  CheckCircleIcon,
+  CheckIcon,
   ListIcon,
-  XCircleIcon,
+  XIcon,
 } from '@phosphor-icons/react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -35,6 +35,23 @@ const stripPrefix = (s: string) => s.replace(/^[A-D]\s*[.、．:：]\s*/, '')
 const pct = (r: number, tot: number) => (tot > 0 ? `${Math.round((r / tot) * 100)}%` : null)
 
 type NavState = { tiku: string; subj: string; siblings: string[]; sIdx: number; onlyWrong?: boolean } | { onlyWrong: true } | null
+
+/** 红笔圈注（签名细节）：手绘感椭圆圈住对错号，只出现在判分条，像老师批卷 */
+function PenMark({ ok }: { ok: boolean }) {
+  return (
+    <span className={cn('relative flex size-6 shrink-0 items-center justify-center', ok ? 'text-success' : 'text-destructive')}>
+      {ok ? <CheckIcon className="size-4" weight="bold" /> : <XIcon className="size-4" weight="bold" />}
+      <svg viewBox="0 0 36 36" className="absolute inset-0 size-6 -rotate-3" fill="none" aria-hidden>
+        <path
+          d="M18 2.6c5-.3 10 1.8 12.6 5.6 2.4 3.5 2.6 8.6.6 13.2C28.9 30.6 23.4 34 16.8 33.6 10.6 33.2 5.4 29.7 3.6 24 1.9 18.4 3.4 11.4 7.6 7 10.4 4.1 14 2.9 18 2.6Z"
+          stroke="currentColor"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+        />
+      </svg>
+    </span>
+  )
+}
 
 export default function Quiz() {
   const { id = '' } = useParams()
@@ -206,7 +223,7 @@ export default function Quiz() {
             <EmptyDescription>网络或数据暂时不可用</EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
-            <Button variant="outline" className="rounded-full" onClick={load}>
+            <Button variant="outline" onClick={load}>
               重试
             </Button>
           </EmptyContent>
@@ -232,7 +249,7 @@ export default function Quiz() {
             <EmptyDescription>{onlyWrong ? '回到错题本继续下一章' : '换个章节试试'}</EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
-            <Button variant="outline" className="rounded-full" asChild>
+            <Button variant="outline" asChild>
               <Link to={onlyWrong ? '/wrong' : '/'}>{onlyWrong ? '回错题本' : '回首页'}</Link>
             </Button>
           </EmptyContent>
@@ -243,7 +260,7 @@ export default function Quiz() {
         <div ref={topRef} className="scroll-mt-28">
           {/* 题干 */}
           <div className="flex flex-wrap items-center gap-2.5">
-            <Badge variant={isMulti ? 'secondary' : 'default'} className="rounded-full px-2.5">
+            <Badge variant="secondary" className="rounded-full px-2.5">
               {q.t}
             </Badge>
             {q.k && (
@@ -293,11 +310,7 @@ export default function Quiz() {
                   okNow ? 'border-success/50 bg-success/10' : 'border-destructive/50 bg-destructive/10',
                 )}
               >
-                {okNow ? (
-                  <CheckCircleIcon className="size-5 text-success" weight="fill" />
-                ) : (
-                  <XCircleIcon className="size-5 text-destructive" weight="fill" />
-                )}
+                <PenMark ok={okNow} />
                 <span className={cn('text-[15px] font-semibold', okNow ? 'text-success' : 'text-destructive')}>
                   {okNow ? '回答正确' : '回答错误'}
                 </span>
@@ -317,7 +330,7 @@ export default function Quiz() {
                     {q.kid && (
                       <Link
                         to={`/kd?focus=${q.kid}`}
-                        className="ml-auto flex items-center gap-1 text-[13px] font-medium text-primary"
+                        className="ml-auto flex items-center gap-1 text-[13px] font-medium text-foreground underline-offset-4 hover:underline"
                       >
                         看考点教材
                         <ArrowRightIcon className="size-3.5" />
@@ -340,7 +353,7 @@ export default function Quiz() {
         <div className="mt-8 flex items-center gap-3 border-t border-border/60 pt-4">
           <Button
             variant="outline"
-            className="rounded-full px-5"
+            className="px-5"
             onClick={qIdx === 0 ? () => gotoChapter(-1) : prevQ}
             disabled={qIdx === 0 && !siblings?.[sIdx - 1]}
           >
@@ -349,12 +362,12 @@ export default function Quiz() {
           </Button>
           <span className="text-xs text-muted-foreground tabular-nums">已答 {answeredInChapter}/{total}</span>
           {qIdx < total - 1 ? (
-            <Button className="ml-auto rounded-full px-5" onClick={nextQ}>
+            <Button className="ml-auto px-5" onClick={nextQ}>
               下一题
               <CaretRightIcon className="size-4" />
             </Button>
           ) : (
-            <Button className="ml-auto rounded-full px-5" onClick={() => gotoChapter(1)} disabled={!siblings?.[sIdx + 1]}>
+            <Button className="ml-auto px-5" onClick={() => gotoChapter(1)} disabled={!siblings?.[sIdx + 1]}>
               下一章
               <ArrowRightIcon className="size-4" />
             </Button>
@@ -374,7 +387,7 @@ export default function Quiz() {
               <ArrowLeftIcon className="size-4" />
             </Link>
           </Button>
-          <div className={cn('min-w-0 flex-1 truncate tracking-tight', wide ? 'font-display text-[21px] font-normal' : 'text-[15px] font-semibold')}>
+          <div className={cn('min-w-0 flex-1 truncate tracking-tight', wide ? 'font-display text-[20px] font-normal' : 'text-[15px] font-semibold')}>
             {chapter?.n ?? '加载中…'}
           </div>
           {onlyWrong && (
@@ -451,14 +464,14 @@ export default function Quiz() {
               })}
             </div>
             <div className="mt-4 space-y-2 border-t border-border/60 pt-3">
-              <Button variant="outline" size="sm" className="w-full rounded-full" onClick={() => gotoChapter(-1)} disabled={!siblings?.[sIdx - 1]}>
+              <Button variant="outline" size="sm" className="w-full" onClick={() => gotoChapter(-1)} disabled={!siblings?.[sIdx - 1]}>
                 上一章
               </Button>
-              <Button variant="outline" size="sm" className="w-full rounded-full" onClick={() => gotoChapter(1)} disabled={!siblings?.[sIdx + 1]}>
+              <Button variant="outline" size="sm" className="w-full" onClick={() => gotoChapter(1)} disabled={!siblings?.[sIdx + 1]}>
                 下一章
               </Button>
             </div>
-            <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">键盘：A–D 选项 · ←/→ 切题 · Enter 确认 / 下一题</p>
+            <p className="mt-3 text-xs leading-relaxed text-muted-foreground">键盘：A–D 选项 · ←/→ 切题 · Enter 确认 / 下一题</p>
           </aside>
           <div className="min-w-0 max-w-[720px]">{bodyContent}</div>
         </div>
@@ -471,7 +484,7 @@ export default function Quiz() {
           <div className="mx-auto flex h-16 max-w-2xl items-center gap-2 px-4">
             <Button
               variant="outline"
-              className="flex-1 rounded-full"
+              className="flex-1"
               onClick={qIdx === 0 ? () => gotoChapter(-1) : prevQ}
               disabled={qIdx === 0 && !siblings?.[sIdx - 1]}
             >
@@ -482,13 +495,13 @@ export default function Quiz() {
               已答 {answeredInChapter}/{total}
             </span>
             {qIdx < total - 1 ? (
-              <Button className="flex-1 rounded-full" onClick={nextQ}>
+              <Button className="flex-1" onClick={nextQ}>
                 下一题
                 <CaretRightIcon className="size-4" />
               </Button>
             ) : (
               <Button
-                className="flex-1 rounded-full"
+                className="flex-1"
                 onClick={() => gotoChapter(1)}
                 disabled={!siblings?.[sIdx + 1]}
               >

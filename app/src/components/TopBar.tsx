@@ -47,7 +47,7 @@ export default function TopBar() {
         asChild
         variant="ghost"
         size="sm"
-        className={cn('gap-1.5 rounded-full text-[13px]', active ? 'bg-[#cc785c] text-white' : 'text-white/65 hover:text-white')}
+        className={cn('gap-1.5 rounded-lg text-[13px]', active ? 'bg-white/15 text-white' : 'text-white/65 hover:text-white')}
       >
         <Link to={to}>
           <Icon className="size-3.5" weight={active ? 'fill' : 'regular'} />
@@ -60,7 +60,7 @@ export default function TopBar() {
   return (
     <header className="sticky top-0 z-50 bg-[#181715]">
       <div className="mx-auto flex h-11 max-w-3xl items-center justify-between px-4">
-        <Button asChild variant="ghost" size="sm" className="font-display gap-2 rounded-full px-2 text-[15px] font-normal tracking-tight text-white">
+        <Button asChild variant="ghost" size="sm" className="font-display gap-2 rounded-lg px-2 text-[15px] font-normal tracking-tight text-white">
           <Link to="/">
             <GraduationCapIcon className="size-5" weight="duotone" />
             苍盾考研政治题库

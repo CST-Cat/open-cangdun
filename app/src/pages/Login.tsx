@@ -77,7 +77,7 @@ export default function Login({ onOk }: { onOk: () => void }) {
 
           <p className="mt-5 text-center text-xs text-muted-foreground">
             首次部署的账号密码在容器日志中查看：<br />
-            <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-[11px]">docker logs cangdun</code>
+            <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">docker logs cangdun</code>
           </p>
         </CardContent>
       </Card>

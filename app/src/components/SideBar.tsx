@@ -30,21 +30,14 @@ export default function SideBar() {
       className={cn(
         'flex items-center gap-2.5 rounded-lg px-3 py-2 text-[14px] transition-colors',
         active
-          ? 'bg-primary font-medium text-primary-foreground'
+          ? 'bg-secondary font-medium text-foreground'
           : 'text-muted-foreground hover:bg-secondary hover:text-foreground',
       )}
     >
       <Icon className="size-4.5" weight={active ? 'fill' : 'regular'} />
       {label}
       {badge !== undefined && badge > 0 && (
-        <span
-          className={cn(
-            'ml-auto rounded-full px-1.5 text-[11px] tabular-nums',
-            active ? 'bg-white/25 text-white' : 'bg-destructive/15 text-destructive',
-          )}
-        >
-          {badge}
-        </span>
+        <span className="ml-auto text-xs text-muted-foreground tabular-nums">{badge}</span>
       )}
     </Link>
   )
@@ -57,7 +50,7 @@ export default function SideBar() {
         </span>
         <span>
           <span className="font-display block text-[17px] leading-tight font-normal">苍盾</span>
-          <span className="block text-[11px] text-muted-foreground">考研政治题库</span>
+          <span className="block text-xs text-muted-foreground">考研政治题库</span>
         </span>
       </Link>
 

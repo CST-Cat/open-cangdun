@@ -174,7 +174,7 @@ export default function Home() {
       to="/wrong"
       className="flex items-center gap-3 rounded-xl border border-border/70 bg-card px-4 py-3.5 transition-transform active:scale-[0.99]"
     >
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-destructive/10 text-destructive">
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-secondary text-muted-foreground">
         <XCircleIcon className="size-5.5" weight="duotone" />
       </span>
       <div className="min-w-0 flex-1">
@@ -197,7 +197,7 @@ export default function Home() {
         <EmptyDescription>数据暂时无法获取，请重试</EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        <Button variant="outline" className="rounded-full" onClick={() => location.reload()}>
+        <Button variant="outline" onClick={() => location.reload()}>
           重试
         </Button>
       </EmptyContent>
@@ -222,7 +222,7 @@ export default function Home() {
         to={`/s/${key}`}
         className="flex items-center gap-3 rounded-xl border border-border/70 bg-card px-4 py-3.5 transition-transform active:scale-[0.99]"
       >
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-secondary text-muted-foreground">
           <Icon className="size-5.5" weight="duotone" />
         </span>
         <div className="min-w-0 flex-1">
@@ -234,7 +234,7 @@ export default function Home() {
           {prog && prog.total > 0 ? (
             <div className="mt-2 flex items-center gap-2">
               <Progress value={pct} className="h-1 flex-1" />
-              <span className="shrink-0 text-[11px] text-muted-foreground tabular-nums">
+              <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
                 {prog.answered}/{prog.total.toLocaleString()} · {pct}%
               </span>
             </div>
@@ -258,7 +258,7 @@ export default function Home() {
         className="group flex min-h-32 flex-col rounded-xl border border-border/70 bg-card p-4 transition-colors hover:border-primary/50"
       >
         <div className="flex items-start justify-between">
-          <span className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          <span className="flex size-10 items-center justify-center rounded-lg bg-secondary text-muted-foreground">
             <Icon className="size-5.5" weight="duotone" />
           </span>
           <span className="text-xs text-muted-foreground tabular-nums">{sections && countOf(sections, key)} 项</span>
@@ -271,12 +271,12 @@ export default function Home() {
           {prog && prog.total > 0 ? (
             <>
               <Progress value={pct} className="h-1" />
-              <div className="mt-1.5 text-[11px] text-muted-foreground tabular-nums">
+              <div className="mt-1.5 text-xs text-muted-foreground tabular-nums">
                 已答 {prog.answered} / {prog.total.toLocaleString()} · {pct}%
               </div>
             </>
           ) : (
-            <div className="text-[11px] text-muted-foreground">进度统计中…</div>
+            <div className="text-xs text-muted-foreground">进度统计中…</div>
           )}
         </div>
       </Link>
@@ -288,7 +288,7 @@ export default function Home() {
       to="/kd"
       className="flex items-center gap-3 rounded-xl border border-border/70 bg-card px-4 py-3.5 transition-transform active:scale-[0.99]"
     >
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-secondary text-muted-foreground">
         <BookBookmarkIcon className="size-5.5" weight="duotone" />
       </span>
       <div className="min-w-0 flex-1">
@@ -300,7 +300,7 @@ export default function Home() {
   )
 
   const footer = (
-    <footer className="pt-10 pb-2 text-center text-[11px] text-muted-foreground/70">
+    <footer className="pt-10 pb-2 text-center text-xs text-muted-foreground/70">
       数据仅供个人学习交流 · 来源苍盾题库
     </footer>
   )

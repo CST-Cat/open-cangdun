@@ -62,7 +62,7 @@ function ChapterList({
                 {done ? (
                   <CheckCircleIcon className="size-5 text-success" weight="fill" />
                 ) : (
-                  <Badge variant="secondary" className="tabular-nums">{ch.c} 题</Badge>
+                  <span className="text-xs text-muted-foreground tabular-nums">{ch.c} 题</span>
                 )}
               </ItemActions>
             </button>
@@ -146,7 +146,7 @@ function BookCard({
         {bookProg && bookProg.total > 0 && (
           <div className="flex items-center gap-2">
             <Progress value={Math.round((bookProg.answered / bookProg.total) * 100)} className="h-1 flex-1" />
-            <span className="text-[11px] text-muted-foreground tabular-nums">
+            <span className="text-xs text-muted-foreground tabular-nums">
               本书 {bookProg.answered}/{bookProg.total.toLocaleString()}
             </span>
           </div>
@@ -158,7 +158,7 @@ function BookCard({
               <EmptyDescription>点击重试重新加载该书目录</EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
-              <Button variant="outline" size="sm" className="rounded-full" onClick={() => idx !== undefined && getCatalog(idx).then(setCata).catch(() => {})}>
+              <Button variant="outline" size="sm" onClick={() => idx !== undefined && getCatalog(idx).then(setCata).catch(() => {})}>
                 重试
               </Button>
             </EmptyContent>
@@ -272,8 +272,8 @@ export default function SectionPage() {
           <Input
             value={bookQuery}
             onChange={(e) => setBookQuery(e.target.value)}
-            placeholder="搜题库名，如：肖1000、腿姐、徐涛…"
-            className="h-10 rounded-full bg-background pl-9"
+            placeholder="搜题库名，如：肖1000"
+            className="h-10 bg-background pl-9"
           />
         </div>
       </div>
@@ -285,7 +285,7 @@ export default function SectionPage() {
             <EmptyDescription>分区数据暂时无法获取</EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
-            <Button variant="outline" className="rounded-full" onClick={() => location.reload()}>
+            <Button variant="outline" onClick={() => location.reload()}>
               重试
             </Button>
           </EmptyContent>
@@ -390,7 +390,7 @@ function WideBookPanel({
               <EmptyDescription>点击重试重新加载该书目录</EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
-              <Button variant="outline" size="sm" className="rounded-full" onClick={() => location.reload()}>
+              <Button variant="outline" size="sm" onClick={() => location.reload()}>
                 重试
               </Button>
             </EmptyContent>
@@ -490,14 +490,14 @@ function WideSection({
   return (
     <main className="mx-auto w-full max-w-[1200px] px-10 pb-20">
       <div className="flex items-center gap-3 pt-8">
-        <h1 className="font-display text-[26px] font-normal tracking-tight">{SECTION_NAME[sectionKey] ?? '题库'}</h1>
+        <h1 className="font-display text-[28px] font-normal tracking-tight">{SECTION_NAME[sectionKey] ?? '题库'}</h1>
         <div className="relative ml-auto w-80">
           <MagnifyingGlassIcon className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="搜题库名，如：肖1000、腿姐、徐涛…"
-            className="h-10 rounded-full bg-card pl-9"
+            placeholder="搜题库名，如：肖1000"
+            className="h-10 bg-card pl-9"
           />
         </div>
       </div>
@@ -507,7 +507,7 @@ function WideSection({
           {visible.map((e) => {
             if (!e.book && !e.href) {
               return (
-                <div key={e.id} className="px-2.5 pt-3 pb-1 text-[11px] font-medium tracking-wide text-muted-foreground first:pt-1">
+                <div key={e.id} className="px-2.5 pt-3 pb-1 text-xs font-medium tracking-wide text-muted-foreground first:pt-1">
                   {e.name}
                 </div>
               )

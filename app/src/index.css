@@ -21,12 +21,14 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Apple DESIGN.md → shadcn tokens
-   primary #0066cc · parchment #f5f5f7 · ink #1d1d1f · hairline #e0e0e0 */
+/* Claude DESIGN.md → shadcn tokens
+   primary #cc785c · canvas #faf9f5 · ink #141413 · hairline #e6dfd8 */
 @theme inline {
     --font-sans: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont,
         "SF Pro Text", "PingFang SC", "Microsoft YaHei", "Helvetica Neue",
         system-ui, sans-serif;
+    --font-display: "Anthropic Serif", Copernicus, "Tiempos Headline",
+        "Songti SC", STSong, "Noto Serif SC", "Source Han Serif SC", serif;
     --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
@@ -71,76 +73,76 @@
 }
 
 :root {
-    --background: #ffffff;              /* canvas */
-    --foreground: #1d1d1f;              /* ink */
-    --card: #ffffff;
-    --card-foreground: #1d1d1f;
-    --popover: #ffffff;
-    --popover-foreground: #1d1d1f;
-    --primary: #0066cc;                 /* Action Blue */
+    --background: #faf9f5;              /* canvas */
+    --foreground: #141413;              /* ink */
+    --card: #efe9de;                    /* surface-card */
+    --card-foreground: #141413;
+    --popover: #faf9f5;
+    --popover-foreground: #141413;
+    --primary: #cc785c;                 /* coral */
     --primary-foreground: #ffffff;
-    --secondary: #f5f5f7;               /* parchment */
-    --secondary-foreground: #1d1d1f;
-    --muted: #f5f5f7;
-    --muted-foreground: #7a7a7a;        /* ink-muted-48 */
-    --accent: #f0f0f0;                  /* divider-soft hover */
-    --accent-foreground: #1d1d1f;
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: #e0e0e0;                  /* hairline */
-    --input: #e0e0e0;
-    --ring: #0071e3;                    /* focus blue */
-    --success: #248a3d;                 /* iOS green for 正确 */
+    --secondary: #f5f0e8;               /* surface-soft */
+    --secondary-foreground: #141413;
+    --muted: #f5f0e8;
+    --muted-foreground: #6c6a64;        /* muted */
+    --accent: #e8e0d2;                  /* surface-cream-strong hover */
+    --accent-foreground: #141413;
+    --destructive: #c64545;            /* error */
+    --border: #e6dfd8;                  /* hairline */
+    --input: #e6dfd8;
+    --ring: #cc785c;                    /* focus coral */
+    --success: #5db872;                 /* DESIGN.md success */
     --success-foreground: #ffffff;
-    --chart-1: #0066cc;
-    --chart-2: #248a3d;
+    --chart-1: #cc785c;
+    --chart-2: #5db872;
     --chart-3: #b25000;
     --chart-4: #7d4ccb;
-    --chart-5: #7a7a7a;
-    --radius: 1.125rem;                 /* rounded.lg 18px → cards */
-    --sidebar: #f5f5f7;
-    --sidebar-foreground: #1d1d1f;
-    --sidebar-primary: #0066cc;
+    --chart-5: #6c6a64;
+    --radius: 0.75rem;                  /* rounded.lg 12px cards */
+    --sidebar: #f5f0e8;
+    --sidebar-foreground: #141413;
+    --sidebar-primary: #cc785c;
     --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #f0f0f0;
-    --sidebar-accent-foreground: #1d1d1f;
-    --sidebar-border: #e0e0e0;
-    --sidebar-ring: #0071e3;
+    --sidebar-accent: #e8e0d2;
+    --sidebar-accent-foreground: #141413;
+    --sidebar-border: #e6dfd8;
+    --sidebar-ring: #cc785c;
 }
 
 .dark {
-    --background: #000000;              /* surface-black */
-    --foreground: #f5f5f7;
-    --card: #1d1d1f;                    /* ink as elevated surface */
-    --card-foreground: #f5f5f7;
-    --popover: #272729;                 /* surface-tile-1 */
-    --popover-foreground: #f5f5f7;
-    --primary: #0066cc;                 /* Action Blue works on dark tiles */
-    --primary-foreground: #ffffff;
-    --secondary: #272729;
-    --secondary-foreground: #f5f5f7;
-    --muted: #272729;
-    --muted-foreground: #cccccc;        /* body-muted */
-    --accent: #2a2a2c;                  /* surface-tile-2 */
-    --accent-foreground: #f5f5f7;
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: rgba(255, 255, 255, 0.14);
-    --input: rgba(255, 255, 255, 0.18);
-    --ring: #2997ff;                    /* sky link blue */
-    --success: #30d158;
-    --success-foreground: #000000;
-    --chart-1: #2997ff;
-    --chart-2: #30d158;
+    --background: #181715;              /* surface-dark */
+    --foreground: #faf9f5;              /* on-dark */
+    --card: #252320;                    /* surface-dark-elevated */
+    --card-foreground: #faf9f5;
+    --popover: #252320;
+    --popover-foreground: #faf9f5;
+    --primary: #e5a186;                 /* coral brightened on dark */
+    --primary-foreground: #181715;
+    --secondary: #1f1e1b;               /* surface-dark-soft */
+    --secondary-foreground: #faf9f5;
+    --muted: #252320;
+    --muted-foreground: #a09d96;        /* on-dark-soft */
+    --accent: #252320;
+    --accent-foreground: #faf9f5;
+    --destructive: #e06c5e;
+    --border: rgba(250, 249, 245, 0.14);
+    --input: rgba(250, 249, 245, 0.18);
+    --ring: #e5a186;
+    --success: #5db872;
+    --success-foreground: #181715;
+    --chart-1: #e5a186;
+    --chart-2: #5db872;
     --chart-3: #ff9f0a;
     --chart-4: #bf5af2;
-    --chart-5: #98989d;
-    --sidebar: #1d1d1f;
-    --sidebar-foreground: #f5f5f7;
-    --sidebar-primary: #0066cc;
-    --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #2a2a2c;
-    --sidebar-accent-foreground: #f5f5f7;
-    --sidebar-border: rgba(255, 255, 255, 0.14);
-    --sidebar-ring: #2997ff;
+    --chart-5: #a09d96;
+    --sidebar: #1f1e1b;
+    --sidebar-foreground: #faf9f5;
+    --sidebar-primary: #e5a186;
+    --sidebar-primary-foreground: #181715;
+    --sidebar-accent: #252320;
+    --sidebar-accent-foreground: #faf9f5;
+    --sidebar-border: rgba(250, 249, 245, 0.14);
+    --sidebar-ring: #e5a186;
 }
 
 @layer base {
@@ -156,9 +158,8 @@
     @apply bg-background text-foreground;
     font-size: 17px;
     line-height: 1.47;
-    letter-spacing: -0.014em;
   }
-  /* Apple 系统级按压微交互：所有按钮 active 缩放 */
+  /* 按压微交互：所有按钮 active 缩放 */
   button:not(:disabled) {
     transition: transform 0.12s ease;
   }

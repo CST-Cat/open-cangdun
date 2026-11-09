@@ -23,15 +23,15 @@ import type { Sections } from '@/lib/types'
 
 // 四大分区（对应原小程序：强化题库/冲刺模拟/精选题库/专题模块）
 const SECTION_META = [
-  { key: 'qianghua', name: '强化题库', en: 'Intensive', icon: BooksIcon, cls: 'bg-[#3b7cf0] text-white' },
-  { key: 'chongci', name: '冲刺模拟', en: 'Sprint', icon: LightningIcon, cls: 'bg-[#7c5cf0] text-white' },
-  { key: 'jingxuan', name: '精选题库', en: 'Selection', icon: CrosshairIcon, cls: 'bg-[#2aa8a0] text-white' },
-  { key: 'zhuanti', name: '专题模块', en: 'Topics', icon: PuzzlePieceIcon, cls: 'bg-[#34a853] text-white' },
+  { key: 'qianghua', name: '强化题库', en: 'Intensive', icon: BooksIcon, cls: '' },
+  { key: 'chongci', name: '冲刺模拟', en: 'Sprint', icon: LightningIcon, cls: '' },
+  { key: 'jingxuan', name: '精选题库', en: 'Selection', icon: CrosshairIcon, cls: '' },
+  { key: 'zhuanti', name: '专题模块', en: 'Topics', icon: PuzzlePieceIcon, cls: '' },
 ] as const
 
 function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <Card className="rounded-2xl border-border/70 bg-secondary/60 py-3 shadow-none">
+    <Card className="rounded-xl border-border/70 bg-secondary/60 py-3 shadow-none">
       <CardContent className="flex items-center gap-3 px-4">
         <ItemMedia variant="icon" className="bg-primary/10 text-primary">
           {icon}
@@ -68,7 +68,7 @@ export default function Home() {
     <main className="mx-auto w-full max-w-2xl px-4 pb-24">
       {/* 头部 */}
       <section className="pt-8 pb-6 text-center sm:pt-10">
-        <h1 className="text-[30px] leading-tight font-semibold tracking-tight sm:text-[36px]">
+        <h1 className="font-display text-[32px] leading-tight font-normal tracking-tight sm:text-[38px]">
           考研政治，刷完为止
         </h1>
         <p className="mt-1.5 text-[15px] text-muted-foreground">
@@ -79,7 +79,7 @@ export default function Home() {
       {/* 继续刷题 + 统计 */}
       <section className="space-y-3">
         {last && (
-          <Card className="rounded-2xl py-3 shadow-none">
+          <Card className="rounded-xl py-3 shadow-none">
             <CardContent className="flex items-center justify-between gap-3 px-4">
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -118,7 +118,7 @@ export default function Home() {
 
       {/* 四大分区入口 */}
       <section className="pt-7">
-        <h2 className="mb-3 px-1 text-[21px] font-semibold tracking-tight">题库分区</h2>
+        <h2 className="font-display mb-3 px-1 text-[22px] font-normal tracking-tight">题库分区</h2>
         {error && (
           <Empty className="rounded-2xl border py-12">
             <EmptyHeader>
@@ -151,17 +151,17 @@ export default function Home() {
                   : (sections[key as keyof Sections] as unknown[]).length
               return (
                 <Link key={key} to={`/s/${key}`} className="block transition-transform active:scale-[0.98]">
-                  <Card className={`${cls} rounded-2xl border-0 py-4 shadow-none`}>
+                  <Card className={`${cls} rounded-xl border-border/70 bg-card py-4 shadow-none`}>
                     <CardHeader>
                       <div className="flex items-start justify-between">
                         <CardTitle className="text-[19px] tracking-tight">{name}</CardTitle>
-                        <Icon className="size-6 opacity-80" weight="duotone" />
+                        <Icon className="size-6 text-primary" weight="duotone" />
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <CardDescription className="flex items-end justify-between text-white/75">
+                      <CardDescription className="flex items-end justify-between text-muted-foreground">
                         <span className="text-[13px] font-medium">{en}</span>
-                        <Badge variant="outline" className="border-white/30 bg-transparent text-white tabular-nums">
+                        <Badge variant="outline" className="tabular-nums">
                           {count} 项
                         </Badge>
                       </CardDescription>
@@ -175,7 +175,7 @@ export default function Home() {
 
         {/* 考点教材 */}
         {sections && (
-          <Item asChild variant="outline" className="mt-3 rounded-2xl">
+          <Item asChild variant="outline" className="mt-3 rounded-xl">
             <Link to="/kd">
               <ItemMedia variant="icon" className="bg-primary/10 text-primary">
                 <BookBookmarkIcon className="size-5" weight="duotone" />

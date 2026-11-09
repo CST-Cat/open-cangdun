@@ -104,14 +104,17 @@ function useBookCatalog(book: Book, tikuIdx: Map<string, number>) {
   const bookProg = useMemo(() => {
     if (!cata) return null
     let answered = 0
+    let correct = 0
     let total = 0
     for (const chapters of Object.values(cata)) {
       for (const ch of chapters) {
         total += ch.c
-        answered += chapterStat(ch.id).answered
+        const st = chapterStat(ch.id)
+        answered += st.answered
+        correct += st.correct
       }
     }
-    return { answered, total }
+    return { answered, correct, total }
   }, [cata])
 
   return { idx, cata, setCata, failed, subjects, flat, bookProg }
@@ -359,11 +362,11 @@ function WideBookPanel({
   book: Book
   tikuIdx: Map<string, number>
   onPick: (tiku: string, subj: string, ids: string[], sIdx: number) => void
-  onProg: (p: { answered: number; total: number } | null) => void
+  onProg: (p: { answered: number; correct: number; total: number } | null) => void
 }) {
   const { cata, failed, subjects, flat, bookProg } = useBookCatalog(book, tikuIdx)
   useEffect(() => {
-    onProg(bookProg && bookProg.total > 0 ? { answered: bookProg.answered, total: bookProg.total } : null)
+    onProg(bookProg && bookProg.total > 0 ? { answered: bookProg.answered, correct: bookProg.correct, total: bookProg.total } : null)
   }, [bookProg, onProg])
   const [openSubj, setOpenSubj] = useState<string>('')
   const [chapQuery, setChapQuery] = useState('')
@@ -459,7 +462,7 @@ function WideSection({
 }) {
   const [activeId, setActiveId] = useState('')
   const [query, setQuery] = useState('')
-  const [prog, setProg] = useState<{ answered: number; total: number } | null>(null)
+  const [prog, setProg] = useState<{ answered: number; correct: number; total: number } | null>(null)
 
   const entries = useMemo<WideEntry[]>(() => {
     const out: WideEntry[] = []
@@ -514,11 +517,21 @@ function WideSection({
                 <span className="text-xs text-muted-foreground tabular-nums">{Math.round((prog.answered / prog.total) * 100)}%</span>
               </div>
               <div className="mt-1.5 truncate text-sm font-medium">{active.book.name}</div>
-              <div className="mt-2 font-display text-[22px] leading-tight font-medium tabular-nums">
-                {prog.answered}
-                <span className="ml-1.5 font-sans text-[13px] font-normal text-muted-foreground">/ {prog.total.toLocaleString()} 题已答</span>
-              </div>
               <Progress value={Math.round((prog.answered / prog.total) * 100)} className="mt-2.5 h-2" />
+              <div className="mt-3 grid grid-cols-3 gap-2 border-t border-border/70 pt-3">
+                <div>
+                  <div className="font-display text-[18px] leading-tight font-medium tabular-nums">{prog.answered}</div>
+                  <div className="mt-0.5 text-xs text-muted-foreground">已答</div>
+                </div>
+                <div>
+                  <div className="font-display text-[18px] leading-tight font-medium tabular-nums text-destructive">{prog.answered - prog.correct}</div>
+                  <div className="mt-0.5 text-xs text-muted-foreground">错题</div>
+                </div>
+                <div>
+                  <div className="font-display text-[18px] leading-tight font-medium tabular-nums">{prog.total.toLocaleString()}</div>
+                  <div className="mt-0.5 text-xs text-muted-foreground">总题数</div>
+                </div>
+              </div>
             </section>
           )}
           <div className="min-h-0 flex-1 space-y-0.5 overflow-y-auto rounded-xl border border-border/70 bg-card p-2 shadow-sm">

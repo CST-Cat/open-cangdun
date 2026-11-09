@@ -91,6 +91,45 @@ export function globalStat(): GlobalStat {
   return { chapters, answered, correct }
 }
 
+export type TodayStat = { answered: number; correct: number }
+/** 今日答题（按记录时间戳，本地自然日） */
+export function todayStat(): TodayStat {
+  const d = new Date()
+  const start = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime()
+  let answered = 0
+  let correct = 0
+  for (const recs of Object.values(load())) {
+    for (const [, [, ok, ts]] of Object.entries(recs)) {
+      if (ts >= start) {
+        answered++
+        if (ok) correct++
+      }
+    }
+  }
+  return { answered, correct }
+}
+
+export type WrongChapter = { chapterId: string; wrong: number; answered: number }
+/** 错题按章聚合（错多在前） */
+export function wrongChapters(): WrongChapter[] {
+  const out: WrongChapter[] = []
+  for (const [chapterId, recs] of Object.entries(load())) {
+    let wrong = 0
+    let answered = 0
+    for (const [, [, ok]] of Object.entries(recs)) {
+      answered++
+      if (!ok) wrong++
+    }
+    if (wrong > 0) out.push({ chapterId, wrong, answered })
+  }
+  return out.sort((a, b) => b.wrong - a.wrong)
+}
+
+export function wrongStat(): { wrong: number; chapters: number } {
+  const w = wrongChapters()
+  return { wrong: w.reduce((s, x) => s + x.wrong, 0), chapters: w.length }
+}
+
 export function clearAll() {
   cached = {}
   try {

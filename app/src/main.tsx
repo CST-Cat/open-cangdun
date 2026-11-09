@@ -6,6 +6,8 @@ import { Toaster } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Skeleton } from '@/components/ui/skeleton'
 import TopBar from '@/components/TopBar'
+import SideBar from '@/components/SideBar'
+import { useIsWide } from '@/lib/use-media'
 import Login from '@/pages/Login'
 import './index.css'
 
@@ -13,6 +15,7 @@ const Home = lazy(() => import('@/pages/Home'))
 const Quiz = lazy(() => import('@/pages/Quiz'))
 const Kaodian = lazy(() => import('@/pages/Kaodian'))
 const SectionPage = lazy(() => import('@/pages/SectionPage'))
+const WrongPage = lazy(() => import('@/pages/WrongPage'))
 
 function PageFallback() {
   return (
@@ -36,6 +39,7 @@ function Splash() {
 /** 会话门禁：未登录只渲染登录页；/data 请求 401 时自动切回登录页 */
 function Shell() {
   const [state, setState] = useState<'loading' | 'authed' | 'anon'>('loading')
+  const wide = useIsWide()
 
   useEffect(() => {
     fetch('/api/session', { cache: 'no-store' })
@@ -50,16 +54,19 @@ function Shell() {
   if (state === 'anon') return <Login onOk={() => setState('authed')} />
   return (
     <>
-      <TopBar />
+      {wide ? <SideBar /> : <TopBar />}
+      <div className={wide ? 'pl-[236px]' : undefined}>
       <Suspense fallback={<PageFallback />}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/s/:key" element={<SectionPage />} />
           <Route path="/ch/:id" element={<Quiz />} />
           <Route path="/kd" element={<Kaodian />} />
+          <Route path="/wrong" element={<WrongPage />} />
           <Route path="*" element={<Home />} />
         </Routes>
       </Suspense>
+      </div>
     </>
   )
 }

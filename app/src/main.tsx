@@ -40,6 +40,19 @@ function Splash() {
 function Shell() {
   const [state, setState] = useState<'loading' | 'authed' | 'anon'>('loading')
   const wide = useIsWide()
+  // 导航折叠状态：默认折叠（纯图标栏），展开过则记住
+  const [navOpen, setNavOpen] = useState(() => {
+    try {
+      return localStorage.getItem('cd.nav') === 'full'
+    } catch {
+      return false
+    }
+  })
+  useEffect(() => {
+    try {
+      localStorage.setItem('cd.nav', navOpen ? 'full' : 'icon')
+    } catch {}
+  }, [navOpen])
 
   useEffect(() => {
     fetch('/api/session', { cache: 'no-store' })
@@ -54,8 +67,8 @@ function Shell() {
   if (state === 'anon') return <Login onOk={() => setState('authed')} />
   return (
     <>
-      {wide ? <SideBar /> : <TopBar />}
-      <div>
+      {wide ? <SideBar collapsed={!navOpen} onToggle={() => setNavOpen((v) => !v)} /> : <TopBar />}
+      <div className={wide ? `${navOpen ? 'pl-[236px]' : 'pl-16'} transition-[padding] duration-200` : undefined}>
       <Suspense fallback={<PageFallback />}>
         <Routes>
           <Route path="/" element={<Home />} />

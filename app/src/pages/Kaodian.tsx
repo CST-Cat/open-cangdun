@@ -146,9 +146,9 @@ export default function Kaodian() {
       )}
 
       {index && (
-        <div className="lg:grid lg:grid-cols-[320px_minmax(0,1fr)] lg:items-start lg:gap-8">
+        <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start lg:gap-8">
           {/* 左：考点列表 */}
-          <div className="lg:sticky lg:top-6">
+          <div className="lg:order-2 lg:sticky lg:top-6">
             <p className="px-1 pb-2 text-xs text-muted-foreground tabular-nums">{filtered.length} 个考点</p>
             <div className="grid gap-2 [&>*]:min-w-0 lg:max-h-[calc(100vh-190px)] lg:overflow-y-auto lg:pr-1.5">
               {filtered.map((item, i) => (
@@ -186,7 +186,7 @@ export default function Kaodian() {
           </div>
 
           {/* 右：阅读栏（仅桌面） */}
-          <div className="sticky top-6 hidden lg:block">
+          <div className="lg:order-1 sticky top-6 hidden lg:block">
             {!active ? (
               <Empty className="rounded-xl border border-dashed py-20">
                 <EmptyHeader>

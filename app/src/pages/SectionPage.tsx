@@ -502,8 +502,8 @@ function WideSection({
         </div>
       </div>
 
-      <div className="mt-5 grid grid-cols-[320px_minmax(0,1fr)] items-start gap-8">
-        <div className="sticky top-6 max-h-[calc(100vh-120px)] space-y-0.5 overflow-y-auto rounded-xl border border-border/70 bg-card p-2">
+      <div className="mt-5 grid grid-cols-[minmax(0,1fr)_320px] items-start gap-8">
+        <div className="order-2 sticky top-6 max-h-[calc(100vh-120px)] space-y-0.5 overflow-y-auto rounded-xl border border-border/70 bg-card p-2">
           {visible.map((e) => {
             if (!e.book && !e.href) {
               return (
@@ -544,7 +544,7 @@ function WideSection({
           )}
         </div>
 
-        <div>
+        <div className="order-1">
           {active?.book ? (
             <WideBookPanel key={active.id} book={active.book} tikuIdx={tikuIdx} onPick={onPick} />
           ) : (

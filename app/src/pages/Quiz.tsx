@@ -437,8 +437,8 @@ export default function Quiz() {
       </div>
 
 {wide && chapter && total > 0 ? (
-        <div className="grid grid-cols-[320px_minmax(0,1fr)] items-start gap-8">
-          <aside className="sticky top-8 rounded-xl border border-border/70 bg-card p-4">
+        <div className="grid grid-cols-[minmax(0,1fr)_320px] items-start gap-8">
+          <aside className="order-2 sticky top-8 rounded-xl border border-border/70 bg-card p-4">
             <div className="text-xs text-muted-foreground">本章进度</div>
             <div className="mt-1 text-sm font-medium tabular-nums">已答 {answeredInChapter} / {total}</div>
             <Progress value={total ? (answeredInChapter / total) * 100 : 0} className="mt-2 h-1.5" />
@@ -473,7 +473,7 @@ export default function Quiz() {
             </div>
             <p className="mt-3 text-xs leading-relaxed text-muted-foreground">键盘：A–D 选项 · ←/→ 切题 · Enter 确认 / 下一题</p>
           </aside>
-          <div className="min-w-0 max-w-[720px]">{bodyContent}</div>
+          <div className="order-1 min-w-0 max-w-[720px]">{bodyContent}</div>
         </div>
       ) : (
         bodyContent

@@ -120,33 +120,33 @@ export default function Home() {
 
   // ---------- 共用块 ----------
   const overview = (
-    <section className="rounded-xl bg-[#141413] px-4 py-4 text-[#faf9f5] shadow-sm dark:bg-[#f0eee6] dark:text-[#141413]">
+    <section className="rounded-xl border border-border/70 bg-card px-4 py-4 shadow-sm">
       <div className="grid grid-cols-3 gap-3">
         <div>
           <div className="font-display text-[24px] leading-tight font-medium tabular-nums">{today.answered}</div>
-          <div className="mt-0.5 text-xs text-white/55 dark:text-black/55">
+          <div className="mt-0.5 text-xs text-muted-foreground">
             今日答题{today.answered > 0 && <> · 对 {Math.round((today.correct / today.answered) * 100)}%</>}
           </div>
         </div>
         <div>
           <div className="font-display text-[24px] leading-tight font-medium tabular-nums">{stats.answered}</div>
-          <div className="mt-0.5 text-xs text-white/55 dark:text-black/55">
+          <div className="mt-0.5 text-xs text-muted-foreground">
             累计答题{stats.answered > 0 && <> · 对 {Math.round((stats.correct / stats.answered) * 100)}%</>}
           </div>
         </div>
         <div>
           <div className="font-display text-[24px] leading-tight font-medium tabular-nums">{stats.chapters}</div>
-          <div className="mt-0.5 text-xs text-white/55 dark:text-black/55">已刷章节</div>
+          <div className="mt-0.5 text-xs text-muted-foreground">已刷章节</div>
         </div>
       </div>
-      <div className="mt-3.5 border-t border-white/15 pt-3 dark:border-black/10">
-        <div className="flex items-baseline justify-between text-xs text-white/55 dark:text-black/55">
+      <div className="mt-3.5 border-t border-border/70 pt-3">
+        <div className="flex items-baseline justify-between text-xs text-muted-foreground">
           <span>全题库进度</span>
           <span className="tabular-nums">
             {stats.answered} / {TOTAL_QUESTIONS.toLocaleString()} · {overallPct}%
           </span>
         </div>
-        <Progress value={overallPct} className="mt-1.5 h-1.5 bg-white/15 [&>div]:bg-[#faf9f5]/85 dark:bg-black/10 dark:[&>div]:bg-[#141413]/85" />
+        <Progress value={overallPct} className="mt-1.5 h-1.5" />
       </div>
     </section>
   )

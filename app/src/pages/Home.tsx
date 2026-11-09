@@ -255,7 +255,7 @@ export default function Home() {
       <Link
         key={key}
         to={`/s/${key}`}
-        className="group flex min-h-32 flex-col rounded-xl border border-border/70 bg-card p-4 transition-colors hover:border-foreground/30"
+        className="group flex min-h-32 flex-col rounded-xl border border-border/70 bg-card p-4 transition-colors hover:border-primary/50"
       >
         <div className="flex items-start justify-between">
           <span className="flex size-10 items-center justify-center rounded-lg bg-secondary text-muted-foreground">

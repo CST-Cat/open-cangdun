@@ -29,8 +29,8 @@ export function OptionItem({
       aria-pressed={state === 'picked' || state === 'correct' || state === 'wrong'}
       className={cn(
         'flex w-full items-start gap-3 rounded-xl border px-3.5 py-3 text-left transition-colors',
-        state === 'idle' && 'border-border bg-secondary/50 hover:border-foreground/40 hover:bg-secondary',
-        state === 'picked' && 'border-foreground bg-secondary',
+        state === 'idle' && 'border-border bg-secondary/50 hover:border-primary/60 hover:bg-secondary',
+        state === 'picked' && 'border-primary bg-primary/10',
         state === 'correct' && 'border-success/70 bg-success/10',
         state === 'wrong' && 'border-destructive/70 bg-destructive/10',
         state === 'dim' && 'border-border bg-secondary/30 opacity-45',
@@ -41,7 +41,7 @@ export function OptionItem({
         className={cn(
           'mt-px flex size-7 shrink-0 items-center justify-center rounded-full border text-[13px] font-semibold tabular-nums',
           state === 'idle' && 'border-border bg-background text-muted-foreground',
-          state === 'picked' && 'border-foreground bg-foreground text-background',
+          state === 'picked' && 'border-primary bg-primary text-primary-foreground',
           state === 'correct' && 'border-success bg-success text-success-foreground',
           state === 'wrong' && 'border-destructive bg-destructive text-white',
           state === 'dim' && 'border-border bg-background text-muted-foreground',

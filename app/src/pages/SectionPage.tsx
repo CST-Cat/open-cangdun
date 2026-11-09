@@ -354,12 +354,17 @@ function WideBookPanel({
   book,
   tikuIdx,
   onPick,
+  onProg,
 }: {
   book: Book
   tikuIdx: Map<string, number>
   onPick: (tiku: string, subj: string, ids: string[], sIdx: number) => void
+  onProg: (p: { answered: number; total: number } | null) => void
 }) {
   const { cata, failed, subjects, flat, bookProg } = useBookCatalog(book, tikuIdx)
+  useEffect(() => {
+    onProg(bookProg && bookProg.total > 0 ? { answered: bookProg.answered, total: bookProg.total } : null)
+  }, [bookProg, onProg])
   const [openSubj, setOpenSubj] = useState<string>('')
   const [chapQuery, setChapQuery] = useState('')
   const filterCh = (list: { id: string; n: string; c: number }[]) => {
@@ -372,15 +377,7 @@ function WideBookPanel({
     <section className="p-1">
       <div className="flex flex-wrap items-baseline gap-3">
         <h2 className="font-display text-[22px] font-normal tracking-tight">{book.name}</h2>
-        {bookProg && bookProg.total > 0 && (
-          <span className="text-xs text-muted-foreground tabular-nums">
-            本书已答 {bookProg.answered} / {bookProg.total.toLocaleString()}
-          </span>
-        )}
       </div>
-      {bookProg && bookProg.total > 0 && (
-        <Progress value={Math.round((bookProg.answered / bookProg.total) * 100)} className="mt-2.5 h-1" />
-      )}
 
       <div className="mt-4 space-y-3">
         {failed && (
@@ -462,6 +459,7 @@ function WideSection({
 }) {
   const [activeId, setActiveId] = useState('')
   const [query, setQuery] = useState('')
+  const [prog, setProg] = useState<{ answered: number; total: number } | null>(null)
 
   const entries = useMemo<WideEntry[]>(() => {
     const out: WideEntry[] = []
@@ -488,6 +486,9 @@ function WideSection({
 
   const visible = entries.filter((e) => !e.book || !query.trim() || e.name.includes(query.trim()))
   const active = visible.find((e) => e.id === activeId && e.book) ?? visible.find((e) => e.book)
+  useEffect(() => {
+    setProg(null)
+  }, [active?.id])
 
   return (
     <main className="mx-auto w-full max-w-[1200px] px-10 pb-20">
@@ -505,7 +506,22 @@ function WideSection({
       </div>
 
       <div className="mt-5 grid grid-cols-[minmax(0,1fr)_320px] items-start gap-8">
-        <div className="order-2 sticky top-6 max-h-[calc(100vh-120px)] space-y-0.5 overflow-y-auto rounded-xl border border-border/70 bg-card p-2 shadow-sm">
+        <div className="order-2 sticky top-6 flex max-h-[calc(100vh-3rem)] flex-col gap-4">
+          {prog && active?.book && (
+            <section className="rounded-xl border border-border/70 bg-card p-4 shadow-sm">
+              <div className="flex items-baseline justify-between">
+                <span className="text-xs font-medium tracking-wide text-muted-foreground">本书进度</span>
+                <span className="text-xs text-muted-foreground tabular-nums">{Math.round((prog.answered / prog.total) * 100)}%</span>
+              </div>
+              <div className="mt-1.5 truncate text-sm font-medium">{active.book.name}</div>
+              <div className="mt-2 font-display text-[22px] leading-tight font-medium tabular-nums">
+                {prog.answered}
+                <span className="ml-1.5 font-sans text-[13px] font-normal text-muted-foreground">/ {prog.total.toLocaleString()} 题已答</span>
+              </div>
+              <Progress value={Math.round((prog.answered / prog.total) * 100)} className="mt-2.5 h-2" />
+            </section>
+          )}
+          <div className="min-h-0 flex-1 space-y-0.5 overflow-y-auto rounded-xl border border-border/70 bg-card p-2 shadow-sm">
           {visible.map((e) => {
             if (!e.book && !e.href) {
               return (
@@ -544,11 +560,12 @@ function WideSection({
           {visible.filter((e) => e.book).length === 0 && (
             <p className="px-2.5 py-4 text-sm text-muted-foreground">没有匹配的题库</p>
           )}
+          </div>
         </div>
 
         <div className="order-1">
           {active?.book ? (
-            <WideBookPanel key={active.id} book={active.book} tikuIdx={tikuIdx} onPick={onPick} />
+            <WideBookPanel key={active.id} book={active.book} tikuIdx={tikuIdx} onPick={onPick} onProg={setProg} />
           ) : (
             <Empty className="rounded-xl border py-16">
               <EmptyHeader>

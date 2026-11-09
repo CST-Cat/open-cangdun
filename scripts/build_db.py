@@ -24,7 +24,9 @@ def main():
         tiku_name TEXT,
         subject TEXT,
         name TEXT,
-        question_count INTEGER
+        question_count INTEGER,
+        module TEXT,
+        pdati_detail TEXT
     );
     CREATE TABLE IF NOT EXISTS question (
         timu_id TEXT PRIMARY KEY,
@@ -69,9 +71,9 @@ def main():
     chapters = json.load(open(DATA / 'chapters.json'))
     for ch in chapters:
         path = ch['path']
-        cur.execute('INSERT OR REPLACE INTO chapter VALUES (?,?,?,?,?,?)',
+        cur.execute('INSERT OR REPLACE INTO chapter VALUES (?,?,?,?,?,NULL,NULL,NULL)',
                     (str(ch['id']), ' / '.join(path), path[0] if path else '',
-                     path[1] if len(path) > 1 else '', ch['name'], None))
+                     path[1] if len(path) > 1 else '', ch['name']))
 
     # 题目
     n = 0
@@ -81,9 +83,10 @@ def main():
             line = line.strip()
             if not line: continue
             rec = json.loads(line)
-            cur.execute('INSERT OR REPLACE INTO chapter VALUES (?,?,?,?,?,?)',
+            cur.execute('INSERT OR REPLACE INTO chapter VALUES (?,?,?,?,?,?,?,?)',
                         (str(rec['tlevel_id']), ' / '.join(rec['path']), rec['path'][0] if rec['path'] else '',
-                         rec['path'][1] if len(rec['path']) > 1 else '', rec['name'], rec['questionCount']))
+                         rec['path'][1] if len(rec['path']) > 1 else '', rec['name'], rec['questionCount'],
+                         rec.get('module'), json.dumps(rec.get('pdatiDetail'), ensure_ascii=False) if rec.get('pdatiDetail') else None))
             for q in rec['timuInfo']:
                 if q['timu_id'] in seen_q: continue
                 seen_q.add(q['timu_id'])

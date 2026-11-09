@@ -24,19 +24,23 @@ def rewrite_img(html):
         lambda m: 'assets/images/' + m.group(0).split('/')[-1],
         html)
 
-# ---------- catalog：题库→科目→章节 ----------
-catalog = {}
+# ---------- catalog：模块→题库→科目→章节 四层（与小程序 vip 题库一一对应）----------
+mod_map = json.load(open(f'{BASE}/data/catalog_module.json'))
+catalog = {}   # module -> tiku -> subject -> [chapters]
 rows = con.execute('''
   SELECT tlevel_id, path, tiku_name, subject, name, question_count, pdati_detail
   FROM chapter WHERE question_count > 0 ORDER BY path
 ''').fetchall()
 ch_meta = {}
 for r in rows:
-    tiku, subj = r['tiku_name'], r['subject'] or '(全部)'
-    cat = catalog.setdefault(tiku, {})
-    lst = cat.setdefault(subj, [])
-    lst.append({'id': r['tlevel_id'], 'n': r['name'], 'c': r['question_count']})
-    ch_meta[r['tlevel_id']] = {'p': r['path'], 'pdati': r['pdati_detail']}
+    cid = r['tlevel_id']
+    m = mod_map.get(cid) or {}
+    module = m.get('module') or '(精选题库)'
+    tiku = r['tiku_name'] or m.get('tiku') or '(未分组)'
+    subj = r['subject'] or '(全部)'
+    catalog.setdefault(module, {}).setdefault(tiku, {}).setdefault(subj, []).append(
+        {'id': cid, 'n': r['name'], 'c': r['question_count']})
+    ch_meta[cid] = {'p': r['path'], 'pdati': r['pdati_detail'], 'm': module}
 
 with open(f'{WEB}/data/catalog.js', 'w') as f:
     f.write('window.CATALOG=')

@@ -55,7 +55,7 @@ function Shell() {
   return (
     <>
       {wide ? <SideBar /> : <TopBar />}
-      <div className={wide ? 'pl-[236px]' : undefined}>
+      <div>
       <Suspense fallback={<PageFallback />}>
         <Routes>
           <Route path="/" element={<Home />} />

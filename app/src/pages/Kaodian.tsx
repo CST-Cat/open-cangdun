@@ -159,7 +159,7 @@ export default function Kaodian() {
                   size="sm"
                   className={cn(
                     'flex-nowrap rounded-xl text-left',
-                    active?.item.i === item.i && 'border-primary/60 bg-secondary',
+                    active?.item.i === item.i && 'border-foreground/35 bg-secondary',
                   )}
                   onMouseEnter={() => prefetchKaodian(item.i)}
                 >

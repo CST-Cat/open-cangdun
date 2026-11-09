@@ -98,7 +98,7 @@ export default function WrongPage() {
                   </ItemDescription>
                 </ItemContent>
                 <ItemActions className="shrink-0">
-                  <span className="flex items-center gap-1 text-sm font-medium text-primary">
+                  <span className="flex items-center gap-1 text-sm font-medium text-foreground">
                     订正
                     <ArrowRightIcon className="size-4" />
                   </span>

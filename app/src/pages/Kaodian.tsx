@@ -91,11 +91,7 @@ export default function Kaodian() {
       {detail && (
         <div>
           {!detail.h ? (
-            <Empty className="rounded-xl border py-8">
-              <EmptyHeader>
-                <EmptyTitle>该考点暂无教材内容</EmptyTitle>
-              </EmptyHeader>
-            </Empty>
+            <p className="rounded-xl border border-dashed px-4 py-3.5 text-sm text-muted-foreground">该考点暂无教材内容</p>
           ) : (
             <div className="prose-cd max-w-[72ch] text-[16px] leading-[1.85]" dangerouslySetInnerHTML={{ __html: cleanHTML(detail.h) }} />
           )}
@@ -108,15 +104,15 @@ export default function Kaodian() {
   )
 
   return (
-    <main className="mx-auto w-full max-w-2xl px-4 pb-24 lg:max-w-6xl lg:px-8 lg:pb-20">
+    <main className={cn('mx-auto w-full', isDesktop ? 'max-w-[1200px] px-10 pb-20' : 'max-w-2xl px-4 pb-24')}>
       <section className="pt-8 pb-4">
         <h1 className="font-display text-[30px] leading-tight font-normal tracking-tight">考点教材</h1>
         <p className="mt-1 text-sm text-muted-foreground">484 个考点 · 按教材体系整理</p>
       </section>
 
       {/* 搜索 */}
-      <div className="sticky top-11 z-40 -mx-4 bg-background/80 px-4 pb-2 pt-1 backdrop-blur-xl">
-        <div className="relative max-w-xl">
+      <div className="sticky top-11 z-40 -mx-4 bg-background/80 px-4 pb-2 pt-1 backdrop-blur-xl lg:static lg:mx-0 lg:bg-transparent lg:px-0 lg:backdrop-blur-none">
+        <div className="relative max-w-[520px]">
           <MagnifyingGlassIcon className="absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={query}
@@ -153,7 +149,7 @@ export default function Kaodian() {
       )}
 
       {index && (
-        <div className="lg:grid lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)] lg:items-start lg:gap-6">
+        <div className="lg:grid lg:grid-cols-[320px_minmax(0,1fr)] lg:items-start lg:gap-8">
           {/* 左：考点列表 */}
           <div className="lg:sticky lg:top-6">
             <p className="px-1 pb-2 text-xs text-muted-foreground tabular-nums">{filtered.length} 个考点</p>

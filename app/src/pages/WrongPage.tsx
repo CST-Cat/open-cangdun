@@ -47,7 +47,7 @@ export default function WrongPage() {
   }, [wrong.length, totalWrong])
 
   return (
-    <main className={cn('mx-auto w-full px-4', wide ? 'max-w-5xl px-8 pb-20' : 'max-w-2xl pb-24')}>
+    <main className={cn('mx-auto w-full px-4', wide ? 'max-w-[1200px] px-10 pb-20' : 'max-w-2xl pb-24')}>
       <div className={cn(wide ? 'pt-8 pb-4' : 'sticky top-11 z-40 -mx-4 bg-background/80 px-4 pb-2 pt-3 backdrop-blur-xl')}>
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" className="size-8 shrink-0" asChild>
@@ -85,7 +85,7 @@ export default function WrongPage() {
       {rows && rows.length > 0 && (
         <div className={cn('grid gap-2 pt-2 [&>*]:min-w-0', wide && 'grid-cols-2 gap-3')}>
           {rows.map((r) => (
-            <Item asChild key={r.chapterId} variant="outline" className="flex-nowrap rounded-xl text-left">
+            <Item asChild key={r.chapterId} variant="outline" className="h-full flex-nowrap rounded-xl text-left">
               <button
                 type="button"
                 onClick={() => navigate(`/ch/${r.chapterId}`, { state: { onlyWrong: true } })}

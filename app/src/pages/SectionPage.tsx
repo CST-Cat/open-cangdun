@@ -34,7 +34,7 @@ function ChapterList({
   cols?: boolean
 }) {
   return (
-    <div className={cn('grid gap-2 [&>*]:min-w-0', cols && 'xl:grid-cols-2')}>
+    <div className={cn('grid gap-2 [&>*]:min-w-0', cols && 'xl:grid-cols-[repeat(2,minmax(0,1fr))]')}>
       {chapters.map((ch, i) => {
         const st = chapterStat(ch.id)
         const pct = ch.c ? Math.round((st.answered / ch.c) * 100) : 0
@@ -45,16 +45,18 @@ function ChapterList({
           <Item asChild key={ch.id} variant="outline" size="sm" className="flex-nowrap rounded-xl text-left">
             <button type="button" onClick={() => onPick(i)} onMouseEnter={() => prefetchChapter(ch.id)}>
               <ItemContent className="min-w-0">
-                <ItemTitle className="w-full min-w-0 text-[14px] font-normal"><span className="min-w-0 flex-1 truncate">{ch.n}</span></ItemTitle>
-                {st.answered > 0 && (
-                  <>
-                    <Progress value={pct} className="mt-1.5 h-1 w-full max-w-56" />
-                    <ItemTitle className="mt-1 w-full text-xs font-normal text-muted-foreground tabular-nums">
+                <ItemTitle className={cn('w-full min-w-0 text-[14px] font-normal', cols && 'h-10')}><span className={cn('min-w-0 flex-1', cols ? 'line-clamp-2' : 'truncate')}>{ch.n}</span></ItemTitle>
+                <Progress value={pct} className="mt-1.5 h-1 w-full max-w-56" />
+                <ItemTitle className="mt-1 w-full text-xs font-normal text-muted-foreground tabular-nums">
+                  {st.answered > 0 ? (
+                    <>
                       已做 {st.answered}/{ch.c} · 正确率 {acc}%
                       {wrong > 0 && <span className="text-destructive"> · 错 {wrong}</span>}
-                    </ItemTitle>
-                  </>
-                )}
+                    </>
+                  ) : (
+                    <>未开始 · 共 {ch.c} 题</>
+                  )}
+                </ItemTitle>
               </ItemContent>
               <ItemActions className="shrink-0">
                 {done ? (
@@ -486,7 +488,7 @@ function WideSection({
   const active = visible.find((e) => e.id === activeId && e.book) ?? visible.find((e) => e.book)
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-8 pb-20">
+    <main className="mx-auto w-full max-w-[1200px] px-10 pb-20">
       <div className="flex items-center gap-3 pt-8">
         <h1 className="font-display text-[26px] font-normal tracking-tight">{SECTION_NAME[sectionKey] ?? '题库'}</h1>
         <div className="relative ml-auto w-80">
@@ -500,7 +502,7 @@ function WideSection({
         </div>
       </div>
 
-      <div className="mt-5 grid grid-cols-[280px_minmax(0,1fr)] items-start gap-5">
+      <div className="mt-5 grid grid-cols-[320px_minmax(0,1fr)] items-start gap-8">
         <div className="sticky top-6 max-h-[calc(100vh-120px)] space-y-0.5 overflow-y-auto rounded-xl border border-border/70 bg-card p-2">
           {visible.map((e) => {
             if (!e.book && !e.href) {

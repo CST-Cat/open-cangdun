@@ -120,8 +120,8 @@ export default function Home() {
 
   // ---------- 共用块 ----------
   const overview = (
-    <section className="rounded-xl border border-border/70 bg-card px-4 py-4">
-      <div className={cn('grid gap-3', wide ? 'grid-cols-2' : 'grid-cols-3')}>
+    <section className="flex h-full flex-col rounded-xl border border-border/70 bg-card px-4 py-4">
+      <div className="mb-3.5 grid grid-cols-3 gap-3">
         <div>
           <div className="text-[20px] leading-tight font-semibold tabular-nums">{today.answered}</div>
           <div className="mt-0.5 text-xs text-muted-foreground">
@@ -139,7 +139,7 @@ export default function Home() {
           <div className="mt-0.5 text-xs text-muted-foreground">已刷章节</div>
         </div>
       </div>
-      <div className="mt-3.5 border-t border-border/60 pt-3">
+      <div className="mt-auto border-t border-border/60 pt-3">
         <div className="flex items-baseline justify-between text-xs text-muted-foreground">
           <span>全题库进度</span>
           <span className="tabular-nums">
@@ -308,7 +308,7 @@ export default function Home() {
   // ================= 宽屏布局 =================
   if (wide) {
     return (
-      <main className="mx-auto w-full max-w-6xl px-8 pb-20">
+      <main className="mx-auto w-full max-w-[1200px] px-10 pb-20">
         <section className="flex items-end justify-between gap-4 pt-9 pb-6">
           <div>
             <h1 className="font-display text-[34px] leading-tight font-normal tracking-tight">考研政治</h1>
@@ -320,9 +320,9 @@ export default function Home() {
           </div>
         </section>
 
-        <div className="grid grid-cols-[340px_minmax(0,1fr)] items-start gap-5">
-          {/* 左轨：总览 + 行动 */}
-          <div className="space-y-3">
+        <div className="grid grid-cols-2 items-stretch gap-8">
+          {/* 左列：总览（撑满等高） + 行动 */}
+          <div className="grid grid-rows-[1fr_auto_auto] gap-3">
             {overview}
             {continueCard}
             {wrongRow}

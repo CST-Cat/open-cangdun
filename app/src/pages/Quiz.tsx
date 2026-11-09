@@ -365,7 +365,7 @@ export default function Quiz() {
   )
 
   return (
-    <main className={cn('mx-auto w-full', wide ? 'max-w-6xl px-8 pb-20' : 'max-w-2xl px-4 pb-28')}>
+    <main className={cn('mx-auto w-full', wide ? 'max-w-[1200px] px-10 pb-20' : 'max-w-2xl px-4 pb-28')}>
       {/* 顶部：返回 / 章节名 / 题号表 */}
       <div className={cn(wide ? 'mb-5 pt-8' : 'sticky top-11 z-40 -mx-4 mb-4 bg-background/80 px-4 pb-2 pt-3 backdrop-blur-xl')}>
         <div className="flex items-center gap-2">
@@ -424,12 +424,12 @@ export default function Quiz() {
       </div>
 
 {wide && chapter && total > 0 ? (
-        <div className="grid grid-cols-[250px_minmax(0,1fr)] items-start gap-8">
+        <div className="grid grid-cols-[320px_minmax(0,1fr)] items-start gap-8">
           <aside className="sticky top-8 rounded-xl border border-border/70 bg-card p-4">
             <div className="text-xs text-muted-foreground">本章进度</div>
             <div className="mt-1 text-sm font-medium tabular-nums">已答 {answeredInChapter} / {total}</div>
             <Progress value={total ? (answeredInChapter / total) * 100 : 0} className="mt-2 h-1.5" />
-            <div className="mt-4 grid grid-cols-5 gap-1.5">
+            <div className="mt-4 grid grid-cols-6 gap-1.5">
               {chapter.qs.map((qq, i) => {
                 const rec = records[qq.i]
                 return (
@@ -460,7 +460,7 @@ export default function Quiz() {
             </div>
             <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">键盘：A–D 选项 · ←/→ 切题 · Enter 确认 / 下一题</p>
           </aside>
-          <div className="min-w-0 max-w-[760px]">{bodyContent}</div>
+          <div className="min-w-0 max-w-[720px]">{bodyContent}</div>
         </div>
       ) : (
         bodyContent

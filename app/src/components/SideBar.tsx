@@ -32,7 +32,7 @@ export default function SideBar({ collapsed, onToggle }: { collapsed: boolean; o
       title={collapsed ? label : undefined}
       aria-label={collapsed ? label : undefined}
       className={cn(
-        'relative flex items-center rounded-lg text-[14px] transition-colors',
+        'flex items-center rounded-lg text-[14px] transition-colors',
         collapsed ? 'justify-center px-0 py-2.5' : 'gap-2.5 px-3 py-2',
         active
           ? 'bg-secondary font-medium text-foreground'
@@ -43,11 +43,6 @@ export default function SideBar({ collapsed, onToggle }: { collapsed: boolean; o
       {!collapsed && label}
       {!collapsed && badge !== undefined && badge > 0 && (
         <span className="ml-auto text-xs text-muted-foreground tabular-nums">{badge}</span>
-      )}
-      {collapsed && badge !== undefined && badge > 0 && (
-        <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-medium text-white tabular-nums">
-          {badge}
-        </span>
       )}
     </Link>
   )

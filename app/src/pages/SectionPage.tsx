@@ -402,33 +402,35 @@ function WideBookPanel({
             <Skeleton className="h-9 w-4/5 rounded-lg" />
           </div>
         )}
-        {cata && !flat && (
-          <ToggleGroup
-            type="single"
-            variant="outline"
-            className="flex-wrap"
-            value={openSubj}
-            onValueChange={(v) => setOpenSubj(v ?? '')}
-          >
-            {subjects.map(([subj, chapters]) => (
-              <ToggleGroupItem key={subj} value={subj} onMouseEnter={() => prefetchChapter(chapters[0]?.id)}>
-                {subj}
-                <Badge variant="secondary" className="ml-1 tabular-nums">{chapters.length}</Badge>
-              </ToggleGroupItem>
-            ))}
-          </ToggleGroup>
-        )}
-        {cata && ((flat && flat.length > 12) || (openSubj && (cata[openSubj]?.length ?? 0) > 12)) && (
-          <div className="relative max-w-sm">
-            <MagnifyingGlassIcon className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              value={chapQuery}
-              onChange={(e) => setChapQuery(e.target.value)}
-              placeholder="搜本册章节…"
-              className="h-9 rounded-lg pl-9"
-            />
-          </div>
-        )}
+        <div className="flex flex-wrap items-center gap-3">
+          {cata && !flat && (
+            <ToggleGroup
+              type="single"
+              variant="outline"
+              className="flex-wrap"
+              value={openSubj}
+              onValueChange={(v) => setOpenSubj(v ?? '')}
+            >
+              {subjects.map(([subj, chapters]) => (
+                <ToggleGroupItem key={subj} value={subj} onMouseEnter={() => prefetchChapter(chapters[0]?.id)}>
+                  {subj}
+                  <Badge variant="secondary" className="ml-1 tabular-nums">{chapters.length}</Badge>
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+          )}
+          {cata && ((flat && flat.length > 12) || (openSubj && (cata[openSubj]?.length ?? 0) > 12)) && (
+            <div className={flat ? 'relative w-56 shrink-0' : 'relative ml-auto w-56 shrink-0'}>
+              <MagnifyingGlassIcon className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={chapQuery}
+                onChange={(e) => setChapQuery(e.target.value)}
+                placeholder="搜本册章节…"
+                className="h-9 rounded-lg pl-9"
+              />
+            </div>
+          )}
+        </div>
         {cata && flat && (
           <ChapterList cols chapters={filterCh(flat)} onPick={(i) => { const f = filterCh(flat); pickFrom(f.map((x) => x.id), i) }} />
         )}

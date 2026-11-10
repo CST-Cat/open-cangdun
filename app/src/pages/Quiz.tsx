@@ -3,10 +3,12 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
+  BookmarkSimpleIcon,
   CaretLeftIcon,
   CaretRightIcon,
   CheckIcon,
   ListIcon,
+  NotePencilIcon,
   XIcon,
 } from '@phosphor-icons/react'
 import { Badge } from '@/components/ui/badge'
@@ -16,7 +18,9 @@ import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from '
 import { Progress } from '@/components/ui/progress'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { Skeleton } from '@/components/ui/skeleton'
+import NoteDialog from '@/components/NoteDialog'
 import { OptionItem, type OptionState } from '@/components/OptionItem'
+import { hasNote, isFavorite, toggleFavorite, useCollectionsVersion } from '@/lib/collections'
 import { getChapter, prefetchChapter } from '@/lib/data'
 import { cleanHTML } from '@/lib/html'
 import { getChapterRecords, judge, recordAnswer, setLast, useRecordsVersion } from '@/lib/progress'
@@ -34,7 +38,7 @@ const stripPrefix = (s: string) => s.replace(/^[A-D]\s*[.、．:：]\s*/, '')
 
 const pct = (r: number, tot: number) => (tot > 0 ? `${Math.round((r / tot) * 100)}%` : null)
 
-type NavState = { tiku: string; subj: string; siblings: string[]; sIdx: number; onlyWrong?: boolean } | { onlyWrong: true } | null
+type NavState = { tiku: string; subj: string; siblings: string[]; sIdx: number; onlyWrong?: boolean; startQid?: string } | { onlyWrong: true } | { startQid: string } | null
 
 /** 红笔圈注（签名细节）：手绘感椭圆圈住对错号，只出现在判分条，像老师批卷 */
 function PenMark({ ok }: { ok: boolean }) {
@@ -58,6 +62,7 @@ export default function Quiz() {
   const location = useLocation()
   const navigate = useNavigate()
   useRecordsVersion()
+  useCollectionsVersion()
 
   const wide = useIsWide()
   const state = (location.state ?? null) as NavState
@@ -71,6 +76,8 @@ export default function Quiz() {
   const [picked, setPicked] = useState<string[]>([])
   const [judged, setJudged] = useState(false)
   const [gridOpen, setGridOpen] = useState(false)
+  const [noteOpen, setNoteOpen] = useState(false)
+  const startAppliedRef = useRef('')
   const topRef = useRef<HTMLDivElement>(null)
   const verdictRef = useRef<HTMLDivElement>(null)
 
@@ -98,6 +105,17 @@ export default function Quiz() {
     setQIdx(0)
     topRef.current?.scrollIntoView({ block: 'start' })
   }, [id])
+
+  // 从收藏/笔记页跳入时定位到指定题目（每章只应用一次）
+  const startQid = state && 'startQid' in state ? state.startQid : undefined
+  useEffect(() => {
+    if (!chapter || !startQid || onlyWrong) return
+    const mark = `${id}:${startQid}`
+    if (startAppliedRef.current === mark) return
+    startAppliedRef.current = mark
+    const idx = chapter.qs.findIndex((qq) => qq.i === startQid)
+    if (idx > 0) setQIdx(idx)
+  }, [chapter, startQid, id, onlyWrong])
 
   // 空闲预取同组上/下一章
   useEffect(() => {
@@ -186,6 +204,9 @@ export default function Quiz() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey || e.altKey) return
+      if (noteOpen) return
+      const t = e.target as HTMLElement | null
+      if (t && (t.tagName === 'TEXTAREA' || t.tagName === 'INPUT' || t.isContentEditable)) return
       if (e.key === 'ArrowLeft') return prevQ()
       if (e.key === 'ArrowRight') return nextQ()
       if (!q || gridOpen) return
@@ -201,7 +222,7 @@ export default function Quiz() {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [prevQ, nextQ, pick, doJudge, gotoChapter, q, judged, isMulti, picked, qIdx, total, gridOpen])
+  }, [prevQ, nextQ, pick, doJudge, gotoChapter, q, judged, isMulti, picked, qIdx, total, gridOpen, noteOpen])
 
   const optionState = (letter: string): OptionState => {
     if (!q) return 'idle'
@@ -273,6 +294,30 @@ export default function Quiz() {
           <p className="mt-3 text-[17px] leading-[1.8] font-medium tracking-tight whitespace-pre-wrap">
             {q.q}
           </p>
+
+          {/* 收藏 / 笔记 */}
+          <div className="mt-2 flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              className={cn('h-8 gap-1.5 px-2.5 text-[13px]', isFavorite(id, q.i) && 'font-medium text-primary')}
+              aria-pressed={isFavorite(id, q.i)}
+              onClick={() => toggleFavorite(id, q.i)}
+            >
+              <BookmarkSimpleIcon className="size-4" weight={isFavorite(id, q.i) ? 'fill' : 'regular'} />
+              {isFavorite(id, q.i) ? '已收藏' : '收藏'}
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className={cn('h-8 gap-1.5 px-2.5 text-[13px]', hasNote(id, q.i) && 'font-medium text-primary')}
+              onClick={() => setNoteOpen(true)}
+            >
+              <NotePencilIcon className="size-4" />
+              笔记
+              {hasNote(id, q.i) && <span className="size-1.5 rounded-full bg-primary" />}
+            </Button>
+          </div>
 
           {/* 选项：自有 OptionItem（状态色 + 字母徽） */}
           <div className="mt-4 flex flex-col gap-2.5">
@@ -477,6 +522,9 @@ export default function Quiz() {
         </div>
       ) : (
         bodyContent
+      )}
+      {q && (
+        <NoteDialog open={noteOpen} onOpenChange={setNoteOpen} chapterId={id} qid={q.i} stem={q.q} />
       )}
       {/* 底部导航 */}
       {!wide && chapter && total > 0 && (

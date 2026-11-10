@@ -1,16 +1,19 @@
 import { Link, useLocation } from 'react-router-dom'
 import {
+  BookmarkSimpleIcon,
   BookOpenIcon,
   CaretLeftIcon,
   CaretRightIcon,
   GraduationCapIcon,
   HouseIcon,
   MoonIcon,
+  NotePencilIcon,
   SignOutIcon,
   SunIcon,
   XCircleIcon,
 } from '@phosphor-icons/react'
 import { useTheme } from 'next-themes'
+import { favoriteCount, noteCount, useCollectionsVersion } from '@/lib/collections'
 import { useRecordsVersion, wrongStat } from '@/lib/progress'
 import { cn } from '@/lib/utils'
 
@@ -23,6 +26,7 @@ export default function SideBar({ collapsed, onToggle }: { collapsed: boolean; o
   const { pathname } = useLocation()
   const { theme, setTheme } = useTheme()
   useRecordsVersion()
+  useCollectionsVersion()
   const wrong = wrongStat()
 
   const item = (to: string, label: string, Icon: typeof HouseIcon, active: boolean, badge?: number) => (
@@ -79,6 +83,8 @@ export default function SideBar({ collapsed, onToggle }: { collapsed: boolean; o
         {item('/', '题库', HouseIcon, pathname === '/' || pathname.startsWith('/ch') || pathname.startsWith('/s'))}
         {item('/kd', '考点教材', BookOpenIcon, pathname === '/kd')}
         {item('/wrong', '错题本', XCircleIcon, pathname === '/wrong', wrong.wrong)}
+        {item('/favorites', '收藏题目', BookmarkSimpleIcon, pathname === '/favorites', favoriteCount())}
+        {item('/notes', '我的笔记', NotePencilIcon, pathname === '/notes', noteCount())}
       </nav>
 
       <div className="mt-auto space-y-1 border-t border-border/60 pt-3">

@@ -16,6 +16,8 @@ const Quiz = lazy(() => import('@/pages/Quiz'))
 const Kaodian = lazy(() => import('@/pages/Kaodian'))
 const SectionPage = lazy(() => import('@/pages/SectionPage'))
 const WrongPage = lazy(() => import('@/pages/WrongPage'))
+const FavoritesPage = lazy(() => import('@/pages/FavoritesPage'))
+const NotesPage = lazy(() => import('@/pages/NotesPage'))
 
 function PageFallback() {
   return (
@@ -76,6 +78,8 @@ function Shell() {
           <Route path="/ch/:id" element={<Quiz />} />
           <Route path="/kd" element={<Kaodian />} />
           <Route path="/wrong" element={<WrongPage />} />
+          <Route path="/favorites" element={<FavoritesPage />} />
+          <Route path="/notes" element={<NotesPage />} />
           <Route path="*" element={<Home />} />
         </Routes>
       </Suspense>

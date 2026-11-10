@@ -20,7 +20,7 @@ const SECTION_NAME: Record<string, string> = {
   qianghua: '强化题库',
   chongci: '冲刺模拟',
   jingxuan: '精选题库',
-  zhuanti: '专题模块',
+  zhuanti: 'VIP 题库',
 }
 
 /** 章节列表：进度条 + 正确率 + 错题数 */
@@ -329,6 +329,18 @@ export default function SectionPage() {
                     </Item>
                   )
                 }
+                if ('notice' in e) {
+                  return (
+                    <Item key={e.name} variant="outline" className="rounded-xl text-left opacity-60">
+                      <ItemContent>
+                        <ItemTitle className="w-full min-w-0 text-[15px] font-semibold"><span className="min-w-0 flex-1 truncate">{e.name}</span></ItemTitle>
+                      </ItemContent>
+                      <ItemActions>
+                        <span className="text-xs text-muted-foreground">{e.notice}</span>
+                      </ItemActions>
+                    </Item>
+                  )
+                }
                 if ('multi' in e) {
                   return (
                     <Card key={e.name} className="rounded-xl py-4 shadow-none">
@@ -336,7 +348,20 @@ export default function SectionPage() {
                         <CardTitle className="text-[16px] tracking-tight">{e.name}</CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-3 px-4">
-                        {e.multi.map(renderBook)}
+                        {e.multi.map((b) =>
+                          'tiku' in b ? (
+                            renderBook(b)
+                          ) : (
+                            <Item key={b.name} variant="outline" className="rounded-xl text-left opacity-60">
+                              <ItemContent>
+                                <ItemTitle className="w-full min-w-0 text-[15px]"><span className="min-w-0 flex-1 truncate">{b.name}</span></ItemTitle>
+                              </ItemContent>
+                              <ItemActions>
+                                <span className="text-xs text-muted-foreground">{b.notice}</span>
+                              </ItemActions>
+                            </Item>
+                          ),
+                        )}
                       </CardContent>
                     </Card>
                   )
@@ -351,7 +376,7 @@ export default function SectionPage() {
 
 
 /** 宽屏主从两栏：左选书，右展章节 */
-type WideEntry = { id: string; name: string; book?: Book; href?: string; group?: string }
+type WideEntry = { id: string; name: string; book?: Book; href?: string; notice?: string; group?: string }
 
 function WideBookPanel({
   book,
@@ -479,9 +504,12 @@ function WideSection({
       sectionKey === 'qianghua' ? sections.qianghua : sectionKey === 'jingxuan' ? sections.jingxuan : sections.zhuanti
     for (const e of list) {
       if ('href' in e) out.push({ id: 'h:' + e.name, name: e.name, href: e.href })
+      else if ('notice' in e) out.push({ id: 'n:' + e.name, name: e.name, notice: e.notice })
       else if ('multi' in e) {
         out.push({ id: 'g:' + e.name, name: e.name, group: e.name })
-        e.multi.forEach((b) => pushBook(b, e.name))
+        e.multi.forEach((b) =>
+          'tiku' in b ? pushBook(b, e.name) : out.push({ id: 'n:' + e.name + ':' + b.name, name: b.name, notice: b.notice, group: e.name }),
+        )
       } else pushBook(e as Book)
     }
     return out
@@ -536,6 +564,14 @@ function WideSection({
           )}
           <div className="min-h-0 flex-1 space-y-0.5 overflow-y-auto rounded-xl border border-border/70 bg-card p-2 shadow-sm">
           {visible.map((e) => {
+            if (e.notice) {
+              return (
+                <div key={e.id} className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-[14px] text-muted-foreground/60">
+                  <span className="min-w-0 flex-1 truncate">{e.name}</span>
+                  <span className="shrink-0 text-xs">{e.notice}</span>
+                </div>
+              )
+            }
             if (!e.book && !e.href) {
               return (
                 <div key={e.id} className="px-2.5 pt-3 pb-1 text-xs font-medium tracking-wide text-muted-foreground first:pt-1">

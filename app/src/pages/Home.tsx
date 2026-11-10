@@ -40,7 +40,9 @@ function booksOf(sections: Sections, key: string): Book[] {
   if (key === 'qianghua') return sections.qianghua
   if (key === 'chongci') return sections.chongci.flatMap((g) => g.books)
   const entries = key === 'jingxuan' ? sections.jingxuan : sections.zhuanti
-  return entries.flatMap((e) => ('multi' in e ? e.multi : 'href' in e ? [] : [e as Book]))
+  return entries.flatMap((e) =>
+    'multi' in e ? e.multi.filter((b): b is Book => 'tiku' in b) : 'href' in e || 'notice' in e ? [] : [e as Book],
+  )
 }
 
 function countOf(sections: Sections, key: string): number {

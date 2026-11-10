@@ -205,7 +205,11 @@ func serveFile(w http.ResponseWriter, r *http.Request, fp string) {
 	}
 	w.Header().Set("Content-Type", ctype)
 	w.Header().Set("Vary", "Accept-Encoding")
-	if strings.HasPrefix(r.URL.Path, "/data/") || strings.HasPrefix(r.URL.Path, "/fonts/") || strings.HasPrefix(r.URL.Path, "/assets/") {
+	if strings.HasPrefix(r.URL.Path, "/data/") {
+		// 题库数据同 URL 原地刷新（章节内容/分区索引都会变），禁止 immutable 长缓存，
+		// 否则数据更新后浏览器永远拿旧副本；协商缓存由 SW 与浏览器自行处理
+		w.Header().Set("Cache-Control", "no-cache")
+	} else if strings.HasPrefix(r.URL.Path, "/fonts/") || strings.HasPrefix(r.URL.Path, "/assets/") {
 		w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
 	}
 	ae := r.Header.Get("Accept-Encoding")

@@ -1,8 +1,9 @@
 /* 苍盾题库 Service Worker：离线可刷 + 二次进入零网络
    策略：/data/*、/fonts/* → SWR（先回缓存，后台更新）
+        索引类 JSON（sections/tikus/catalog/kd 索引）→ 网络优先（数据刷新后必须立刻生效）
         导航/JS/CSS → 网络优先，离线回退缓存
         /data/images/* → cache-first（内容不可变） */
-const VERSION = 'cd-v1'
+const VERSION = 'cd-v2'
 const SWR_CACHE = `${VERSION}-swr`
 const IMG_CACHE = `${VERSION}-img`
 const SHELL_CACHE = `${VERSION}-shell`
@@ -59,8 +60,15 @@ self.addEventListener('fetch', (e) => {
   const url = new URL(request.url)
   if (url.origin !== location.origin) return
 
+  const isIndexJson =
+    url.pathname === '/data/sections.json' ||
+    url.pathname === '/data/tikus.json' ||
+    url.pathname === '/data/kd/index.json' ||
+    url.pathname.startsWith('/data/catalog/')
   if (url.pathname.startsWith('/data/images/')) {
     e.respondWith(cacheFirst(request, IMG_CACHE))
+  } else if (isIndexJson) {
+    e.respondWith(networkFirst(request, SWR_CACHE))
   } else if (url.pathname.startsWith('/data/') || url.pathname.startsWith('/fonts/')) {
     e.respondWith(swr(request, SWR_CACHE))
   } else if (request.mode === 'navigate') {

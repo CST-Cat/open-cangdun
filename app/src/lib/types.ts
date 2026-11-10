@@ -23,10 +23,13 @@ export type Kaodian = { t: string; h: string }
 
 // 原版四大分区（sections.json）
 export type Book = { name: string; tiku: string; subject?: string }
+export type NoticeEntry = { name: string; notice: string }
+export type MultiEntry = Book | NoticeEntry
 export type SectionEntry =
   | Book
-  | { name: string; multi: Book[] }
+  | { name: string; multi: MultiEntry[] }
   | { name: string; href: string }
+  | NoticeEntry
 export type Sections = {
   qianghua: Book[]
   chongci: { group: string; books: Book[] }[]

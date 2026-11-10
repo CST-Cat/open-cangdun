@@ -118,19 +118,30 @@ const sections = {
     has('每日刷题') && { name: '每日刷题', tiku: '每日刷题' },
     has('时政题库') && { name: '时政刷题', tiku: '时政题库' },
   ].filter(Boolean),
-  // VIP 题库：小程序「专题模块」12 入口一一对应
-  zhuanti: [
-    { name: '组合刷题', multi: booksOfModule('组合刷题') },
-    { name: '帽子题●强化', multi: booksOfModule('帽子题●强化') },
-    { name: '帽子题●冲刺', multi: booksOfModule('帽子题●冲刺') },
-    { name: '速刷版●强化', multi: booksOfModule('速刷版●强化') },
-    { name: '速刷版●冲刺', multi: booksOfModule('速刷版●冲刺') },
-    { name: '时政●冲刺', multi: booksOfModule('时政●冲刺') },
-    { name: '考点刷题', multi: booksOfModule('考点刷题') },
-    { name: '智能错题', href: '/wrong' },
-    { name: '考点整理', href: '/kd' },
-    { name: '搜题（考点）', href: '/kd' },
-  ].filter((e) => !('multi' in e) || e.multi.length > 0),
+  // VIP 题库：小程序「专题模块」12 入口一一对应（顺序与 catalog_tree 一致）
+  // 组内书目按小程序树顺序点名：目录里有真实章节的给 tiku，无章节的是未出版占位
+  // （源数据 questionCount=0，小程序端提示「出版后，陆续更新」），给 notice 不给假书
+  zhuanti: (() => {
+    const pick = (mod, names) => {
+      const byDisplay = new Map(booksOfModule(mod).map((b) => [b.name, b]))
+      return names.map((n) => byDisplay.get(n) ?? { name: n, notice: '出版后，陆续更新' })
+    }
+    const QH = ['27版肖1000', '27腿姐刷题计划', '27版徐涛优题库-基础题', '27版徐涛优题库-拔高题', '27杨攀660题', '27米鹏1000题']
+    return [
+      { name: '组合刷题', multi: pick('组合刷题', ['27听涛涛课刷肖1000', '27听腿姐课刷肖1000', '27张修齐肖1000重点题']) },
+      { name: '帽子题●强化', multi: pick('帽子题●强化', QH) },
+      { name: '帽子题●冲刺', multi: pick('帽子题●冲刺', ['27版徐涛3套卷', '27版肖8', '27腿姐4套卷', '27版米鹏6套卷', '27版肖4', '27腿姐8套卷', '27版米鹏3套卷']) },
+      { name: '速刷版●强化', multi: pick('速刷版●强化', QH) },
+      { name: '速刷版●冲刺', multi: pick('速刷版●冲刺', ['27版肖8', '27版徐涛3套卷', '27腿姐4套卷', '27版肖4', '27腿姐8套卷', '27版米鹏6套卷', '27版米鹏3套卷']) },
+      { name: '时政●冲刺', multi: pick('时政●冲刺', ['时政汇编', '27版肖8肖4徐3腿4', '27版米6米3余6']) },
+      { name: '智能错题', href: '/wrong' },
+      { name: '我的笔记', notice: '网页版暂未开放' },
+      { name: '收藏题目', notice: '网页版暂未开放' },
+      { name: '搜题（考点）', href: '/kd' },
+      { name: '考点整理', href: '/kd' },
+      { name: '考点刷题', multi: pick('考点刷题', ['马原', '毛中特', '史纲', '思修', '新思想']) },
+    ]
+  })(),
 }
 write('sections.json', JSON.stringify(sections))
 

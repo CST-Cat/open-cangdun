@@ -76,41 +76,65 @@ const chapterCount = tikuNames.reduce(
   (acc, n) => acc + Object.values(catalog[n]).reduce((s, l) => s + l.length, 0), 0)
 console.log(`目录: ${tikuNames.length} 题库 / ${chapterCount} 章节 → tikus.json + catalog/*.json`)
 
-// ---------- 1b. 原版四大分区（强化题库/冲刺模拟/精选题库/专题模块） ----------
-// 分组依据原小程序页面结构（data/qianghua_full.json、chongci_full.json、cdtklist_full.json）
+// ---------- 1b. 四大分区（与原小程序一一对应） ----------
+// catalog 键 = 题库书唯一键；重名版本键带 ｜模块 后缀（仅索引用，展示名由 name 提供）
+const chmeta = parseJSONP(catSrc, 'window.CHMETA=')
+const keyModule = {} // 键 -> 所属模块
+const keySeries = {} // 键 -> 冲刺模拟系列（27版/26版押题库），非冲刺为 null
+for (const [k, groups] of Object.entries(catalog)) {
+  const id = Object.values(groups)[0][0].id
+  const meta = chmeta[id] ?? {}
+  keyModule[k] = meta.m ?? '(精选题库)'
+  const p = meta.p ?? []
+  keySeries[k] = p[1] === '冲刺模拟' ? (p[2] ?? '冲刺模拟') : null
+}
+const book = (k) => ({ name: k.includes('｜') ? k.split('｜')[0] : k, tiku: k })
+const booksOfModule = (mod) =>
+  Object.keys(catalog).filter((k) => keyModule[k] === mod).map(book)
+const booksOfSeries = (series) =>
+  Object.keys(catalog).filter((k) => keySeries[k] === series).map(book)
 const has = (n) => (catalog[n] ? { name: n, tiku: n } : null)
-const pick = (...names) => names.map(has).filter(Boolean)
+
 const sections = {
-  qianghua: pick(
-    '27余峰500题', '27腿姐刷题计划', '27杨攀660题', '27米鹏1000题',
-    '27版肖1000', '27版徐涛优题库-基础题', '27版徐涛优题库-拔高题',
-  ),
+  // 强化题库：小程序·强化页 10 大系列
+  qianghua: [
+    '27余峰500题', '27腿姐刷题计划', '27杨攀660题', '27苏一300题',
+    '27米鹏1000题', '27徐涛优题库-基础题', '27徐涛优题库-拔高题',
+    '27米鹏大李子720题', '27版肖1000题', '27苏一800题',
+  ].map(has).filter(Boolean),
+  // 冲刺模拟：27版 + 26版 押题库
   chongci: [
-    { group: '27版冲刺押题库（不断更新）', books: pick('27腿姐8套卷', '27版米鹏6套卷') },
+    { group: '27版冲刺押题库（不断更新）', books: booksOfSeries('27版冲刺押题库（不断更新）') },
+    { group: '26版冲刺押题库', books: booksOfSeries('26版冲刺押题库') },
   ].filter((g) => g.books.length > 0),
   jingxuan: [
-    has('27肖秀荣1600题') && { name: '精选1600题', ...has('27肖秀荣1600题') },
-    has('27肖秀荣600题') && { name: '二刷600题', ...has('27肖秀荣600题') },
-    catalog['精选题库(根)']?.['真题刷题'] && { name: '真题刷题', tiku: '精选题库(根)', subject: '真题刷题' },
-    { name: '真题（章节版）', multi: pick('马原', '毛中特', '史纲', '思修', '新思想') },
-    has('冲刺300题') && { name: '冲刺300题', ...has('冲刺300题') },
-    has('每日刷题') && { name: '每日刷题', ...has('每日刷题') },
-    has('时政题库') && { name: '时政刷题', ...has('时政题库') },
-    catalog['精选题库(根)']?.['名师题库'] && { name: '名师题库', tiku: '精选题库(根)', subject: '名师题库' },
-    catalog['精选题库(根)']?.['冲刺模拟'] && { name: '冲刺模拟', tiku: '精选题库(根)', subject: '冲刺模拟' },
-    catalog['精选题库(根)']?.['精选1600题(2024)'] && { name: '精选1600题（2024版）', tiku: '精选题库(根)', subject: '精选1600题(2024)' },
-    catalog['精选题库(根)']?.['精选1600题(2026)'] && { name: '精选1600题（2026版）', tiku: '精选题库(根)', subject: '精选1600题(2026)' },
-    catalog['精选题库(根)']?.['二刷600题(2026)'] && { name: '二刷600题（2026版）', tiku: '精选题库(根)', subject: '二刷600题(2026)' },
+    has('27肖秀荣1600题') && { name: '精选1600题（2027版）', tiku: '27肖秀荣1600题' },
+    catalog['精选1600题(2026)'] && { name: '精选1600题（2026版）', tiku: '精选1600题(2026)' },
+    catalog['精选1600题(2024)'] && { name: '精选1600题（2024版）', tiku: '精选1600题(2024)' },
+    has('27肖秀荣600题') && { name: '二刷600题（2027版）', tiku: '27肖秀荣600题' },
+    catalog['二刷600题(2026)'] && { name: '二刷600题（2026版）', tiku: '二刷600题(2026)' },
+    has('真题刷题') && { name: '真题刷题', tiku: '真题刷题' },
+    has('冲刺300题') && { name: '冲刺300题', tiku: '冲刺300题' },
+    has('每日刷题') && { name: '每日刷题', tiku: '每日刷题' },
+    has('时政题库') && { name: '时政刷题', tiku: '时政题库' },
   ].filter(Boolean),
+  // VIP 题库：小程序「专题模块」12 入口一一对应
   zhuanti: [
-    { name: '组合刷题', multi: pick('27听涛涛课刷肖1000', '27听腿姐课刷肖1000', '27张修齐肖1000重点题') },
-    has('时政汇编') && { name: '时政●冲刺', ...has('时政汇编') },
+    { name: '组合刷题', multi: booksOfModule('组合刷题') },
+    { name: '帽子题●强化', multi: booksOfModule('帽子题●强化') },
+    { name: '帽子题●冲刺', multi: booksOfModule('帽子题●冲刺') },
+    { name: '速刷版●强化', multi: booksOfModule('速刷版●强化') },
+    { name: '速刷版●冲刺', multi: booksOfModule('速刷版●冲刺') },
+    { name: '时政●冲刺', multi: booksOfModule('时政●冲刺') },
+    { name: '考点刷题', multi: booksOfModule('考点刷题') },
+    { name: '智能错题', href: '/wrong' },
     { name: '考点整理', href: '/kd' },
-    { name: '考点刷题', href: '/kd' },
+    { name: '搜题（考点）', href: '/kd' },
   ].filter((e) => !('multi' in e) || e.multi.length > 0),
 }
 write('sections.json', JSON.stringify(sections))
-const secTotal = Object.values(sections).flat().length
+
+const secTotal = sections.qianghua.length + sections.chongci.reduce((n, g) => n + g.books.length, 0) + sections.jingxuan.length + sections.zhuanti.length
 console.log(`分区: 四大板块 ${secTotal} 个条目 → sections.json`)
 
 // ---------- 2. 章节分片 → 纯 JSON ----------

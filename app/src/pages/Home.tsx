@@ -19,12 +19,12 @@ import { useIsWide } from '@/lib/use-media'
 import type { Book, Sections } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
-// 四大分区（对应原小程序：强化题库/冲刺模拟/精选题库/专题模块）
+// 四大分区（对应原小程序：强化题库/冲刺模拟/精选题库/VIP题库）
 const SECTION_META = [
   { key: 'qianghua', name: '强化题库', en: 'Intensive', icon: BooksIcon },
   { key: 'chongci', name: '冲刺模拟', en: 'Sprint', icon: LightningIcon },
   { key: 'jingxuan', name: '精选题库', en: 'Selection', icon: CrosshairIcon },
-  { key: 'zhuanti', name: '专题模块', en: 'Topics', icon: PuzzlePieceIcon },
+  { key: 'zhuanti', name: 'VIP 题库', en: 'VIP', icon: PuzzlePieceIcon },
 ] as const
 
 const TOTAL_QUESTIONS = 34784

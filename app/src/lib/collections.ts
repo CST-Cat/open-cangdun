@@ -2,6 +2,7 @@
 // 收藏 cd.favs.v1:  { [chapterId]: { [qid]: ts } }
 // 笔记 cd.notes.v1: { [chapterId]: { [qid]: { t: 正文, ts } } }
 import { useSyncExternalStore } from 'react'
+import { isPulling, registerSync, touchAndPush } from './sync'
 
 const FAV_KEY = 'cd.favs.v1'
 const NOTE_KEY = 'cd.notes.v1'
@@ -35,15 +36,26 @@ function loadNotes(): NoteMap {
   return notes!
 }
 
-function persist() {
+function persistFavs() {
   version++
   try {
-    if (favs) localStorage.setItem(FAV_KEY, JSON.stringify(favs))
-    if (notes) localStorage.setItem(NOTE_KEY, JSON.stringify(notes))
+    localStorage.setItem(FAV_KEY, JSON.stringify(favs))
   } catch {
     // 配额满：静默失败（本会话内存中仍可用）
   }
   listeners.forEach((l) => l())
+  if (!isPulling()) touchAndPush('favs')
+}
+
+function persistNotes() {
+  version++
+  try {
+    localStorage.setItem(NOTE_KEY, JSON.stringify(notes))
+  } catch {
+    // 配额满：静默失败（本会话内存中仍可用）
+  }
+  listeners.forEach((l) => l())
+  if (!isPulling()) touchAndPush('notes')
 }
 
 function subscribe(l: () => void) {
@@ -69,11 +81,11 @@ export function toggleFavorite(chapterId: string, qid: string): boolean {
   if (ch[qid] !== undefined) {
     delete ch[qid]
     if (Object.keys(ch).length === 0) delete all[chapterId]
-    persist()
+    persistFavs()
     return false
   }
   ch[qid] = Date.now()
-  persist()
+  persistFavs()
   return true
 }
 
@@ -119,7 +131,7 @@ export function setNote(chapterId: string, qid: string, text: string) {
     const ch = (all[chapterId] ??= {})
     ch[qid] = { t: text, ts: Date.now() }
   }
-  persist()
+  persistNotes()
 }
 
 export function deleteNote(chapterId: string, qid: string) {
@@ -129,6 +141,30 @@ export function deleteNote(chapterId: string, qid: string) {
 export function noteCount(): number {
   return Object.values(loadNotes()).reduce((s, ch) => s + Object.keys(ch).length, 0)
 }
+
+// ---------- 云端同步（服务端 userdata.json 的 favs / notes kind） ----------
+function applyRemoteFavs(data: unknown) {
+  if (!data || typeof data !== 'object') return
+  favs = data as FavMap
+  version++
+  try {
+    localStorage.setItem(FAV_KEY, JSON.stringify(favs))
+  } catch { /* ignore */ }
+  listeners.forEach((l) => l())
+}
+
+function applyRemoteNotes(data: unknown) {
+  if (!data || typeof data !== 'object') return
+  notes = data as NoteMap
+  version++
+  try {
+    localStorage.setItem(NOTE_KEY, JSON.stringify(notes))
+  } catch { /* ignore */ }
+  listeners.forEach((l) => l())
+}
+
+registerSync('favs', () => loadFavs(), applyRemoteFavs)
+registerSync('notes', () => loadNotes(), applyRemoteNotes)
 
 export type NoteChapter = { chapterId: string; notes: { qid: string; t: string; ts: number }[]; latest: number }
 /** 笔记按章聚合（最近编辑的章在前；章内最近编辑在前） */

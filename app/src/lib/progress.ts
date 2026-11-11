@@ -1,6 +1,7 @@
 // 答题记录：localStorage 持久化 + 轻量订阅
 // 结构（紧凑优先，防超 5MB）：R[chapterId][qid] = [pickedLetterRun, ok(0/1), ts]
 import { useSyncExternalStore } from 'react'
+import { isPulling, registerSync, touchAndPush } from './sync'
 
 const KEY = 'cd.records.v1'
 const LAST = 'cd.last.v1'
@@ -30,6 +31,7 @@ function persist() {
     // 配额满：静默失败（记录仍在本会话内存中可用）
   }
   listeners.forEach((l) => l())
+  if (!isPulling()) touchAndPush('records')
 }
 
 /** 记录变更版本号 —— 组件用它触发重渲染后再直接读数据 */
@@ -144,6 +146,7 @@ export function setLast(chapterId: string, name: string, qIdx: number) {
   try {
     localStorage.setItem(LAST, JSON.stringify({ c: chapterId, n: name, q: qIdx }))
   } catch { /* ignore */ }
+  if (!isPulling()) touchAndPush('records')
 }
 export function getLast(): { c: string; n: string; q: number } | null {
   try {
@@ -153,3 +156,19 @@ export function getLast(): { c: string; n: string; q: number } | null {
     return null
   }
 }
+
+// ---------- 云端同步（服务端 userdata.json 的 records kind：记录 + 最近位置） ----------
+function applyRemoteRecords(data: unknown) {
+  const d = data as { map?: RecMap; last?: { c: string; n: string; q: number } | null } | null
+  if (!d || typeof d !== 'object') return
+  cached = d.map && typeof d.map === 'object' ? d.map : {}
+  version++
+  try {
+    localStorage.setItem(KEY, JSON.stringify(cached))
+    if (d.last && typeof d.last.c === 'string') localStorage.setItem(LAST, JSON.stringify(d.last))
+    else localStorage.removeItem(LAST)
+  } catch { /* ignore */ }
+  listeners.forEach((l) => l())
+}
+
+registerSync('records', () => ({ map: load(), last: getLast() }), applyRemoteRecords)

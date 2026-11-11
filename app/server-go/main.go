@@ -352,6 +352,64 @@ func main() {
 		w.Header().Set("Cache-Control", "no-store")
 		_, _ = w.Write([]byte(`{"ok":true}`))
 	})
+	// ---------- 用户数据同步（答题记录/收藏/笔记） ----------
+	// 整包 JSON 存 configDir/userdata.json（与 auth.json 同卷，跨重建保留）；
+	// 服务端不解析内容，只按顶层 kind 合并（PUT 只覆盖本次带来的 kind）。
+	var userdataMu sync.Mutex
+	userdataPath := filepath.Join(configDir, "userdata.json")
+	mux.HandleFunc("/api/userdata", func(w http.ResponseWriter, r *http.Request) {
+		if !isAuthed(r) {
+			jsonErr(w, http.StatusUnauthorized, "unauthorized")
+			return
+		}
+		w.Header().Set("Cache-Control", "no-store")
+		switch r.Method {
+		case http.MethodGet:
+			userdataMu.Lock()
+			b, err := os.ReadFile(userdataPath)
+			userdataMu.Unlock()
+			if err != nil {
+				b = []byte("{}")
+			}
+			w.Header().Set("Content-Type", "application/json; charset=utf-8")
+			_, _ = w.Write(b)
+		case http.MethodPut:
+			raw, err := io.ReadAll(io.LimitReader(r.Body, 32<<20))
+			if err != nil {
+				jsonErr(w, http.StatusBadRequest, "bad request")
+				return
+			}
+			var incoming map[string]json.RawMessage
+			if err := json.Unmarshal(raw, &incoming); err != nil {
+				jsonErr(w, http.StatusBadRequest, "bad request")
+				return
+			}
+			userdataMu.Lock()
+			merged := map[string]json.RawMessage{}
+			if b, err := os.ReadFile(userdataPath); err == nil {
+				_ = json.Unmarshal(b, &merged)
+			}
+			for k, v := range incoming {
+				merged[k] = v
+			}
+			out, err := json.Marshal(merged)
+			if err == nil {
+				tmp := userdataPath + ".tmp"
+				if err = os.WriteFile(tmp, out, 0o600); err == nil {
+					err = os.Rename(tmp, userdataPath)
+				}
+			}
+			userdataMu.Unlock()
+			if err != nil {
+				jsonErr(w, http.StatusInternalServerError, "write failed")
+				return
+			}
+			w.Header().Set("Content-Type", "application/json; charset=utf-8")
+			_, _ = w.Write([]byte(`{"ok":true}`))
+		default:
+			jsonErr(w, http.StatusMethodNotAllowed, "method not allowed")
+		}
+	})
 	mux.HandleFunc("/api/session", func(w http.ResponseWriter, r *http.Request) {
 		if isAuthed(r) {
 			w.Header().Set("Content-Type", "application/json; charset=utf-8")

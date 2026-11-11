@@ -7,7 +7,11 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import { Skeleton } from '@/components/ui/skeleton'
 import TopBar from '@/components/TopBar'
 import SideBar from '@/components/SideBar'
+import { pullSync } from '@/lib/sync'
 import { useIsWide } from '@/lib/use-media'
+// 副作用导入：让答题记录/收藏/笔记三个存储模块在外壳层完成同步注册（与当前路由无关）
+import '@/lib/collections'
+import '@/lib/progress'
 import Login from '@/pages/Login'
 import './index.css'
 
@@ -55,6 +59,11 @@ function Shell() {
       localStorage.setItem('cd.nav', navOpen ? 'full' : 'icon')
     } catch {}
   }, [navOpen])
+
+  // 登录态确立后拉取一次云端用户数据（记录/收藏/笔记与服务端新者胜）
+  useEffect(() => {
+    if (state === 'authed') void pullSync()
+  }, [state])
 
   useEffect(() => {
     fetch('/api/session', { cache: 'no-store' })

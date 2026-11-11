@@ -89,7 +89,7 @@ function SubjectSelect({
       <SelectTrigger className={className} aria-label="选择科目">
         <SelectValue placeholder="选择科目" />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent position="popper" align="start">
         {subjects.map(([subj, chapters]) => (
           <SelectItem key={subj} value={subj} onMouseEnter={() => prefetchChapter(chapters[0]?.id)}>
             <span className="flex w-full items-center justify-between gap-6">

@@ -31,3 +31,6 @@ app/auth-config/
 
 # cf CLI 本地缓存
 .cloudflare/
+
+# Go 编译产物
+app/server-go/cangdun-server

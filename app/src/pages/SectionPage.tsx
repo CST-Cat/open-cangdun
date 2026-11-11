@@ -1,15 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeftIcon, ArrowRightIcon, CheckCircleIcon, MagnifyingGlassIcon } from '@phosphor-icons/react'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
 import { Input } from '@/components/ui/input'
 import { Item, ItemActions, ItemContent, ItemTitle } from '@/components/ui/item'
 import { Progress } from '@/components/ui/progress'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { getCatalog, getSections, getTikus, prefetchCatalog, prefetchChapter } from '@/lib/data'
 import { chapterStat, useRecordsVersion } from '@/lib/progress'
 import { useIsWide } from '@/lib/use-media'
@@ -73,6 +72,37 @@ function ChapterList({
   )
 }
 
+/** 科目选择：shadcn Select 下拉（宽窄两处共用；条目带章节数） */
+function SubjectSelect({
+  subjects,
+  value,
+  onChange,
+  className,
+}: {
+  subjects: [string, { id: string; n: string; c: number }[]][]
+  value: string
+  onChange: (v: string) => void
+  className?: string
+}) {
+  return (
+    <Select value={value || undefined} onValueChange={onChange}>
+      <SelectTrigger className={className} aria-label="选择科目">
+        <SelectValue placeholder="选择科目" />
+      </SelectTrigger>
+      <SelectContent>
+        {subjects.map(([subj, chapters]) => (
+          <SelectItem key={subj} value={subj} onMouseEnter={() => prefetchChapter(chapters[0]?.id)}>
+            <span className="flex w-full items-center justify-between gap-6">
+              <span className="truncate">{subj}</span>
+              <span className="text-xs text-muted-foreground tabular-nums">{chapters.length} 章</span>
+            </span>
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  )
+}
+
 /** 一本书的目录数据（窄屏卡片与宽屏面板共用） */
 function useBookCatalog(book: Book, tikuIdx: Map<string, number>) {
   const idx = tikuIdx.get(book.tiku)
@@ -92,7 +122,7 @@ function useBookCatalog(book: Book, tikuIdx: Map<string, number>) {
   }, [idx])
 
   const subjects = useMemo(() => Object.entries(cata ?? {}), [cata])
-  // 每个科目只有一章时直接平铺（如真题章节版），否则科目 chips 选择
+  // 每个科目只有一章时直接平铺（如真题章节版），否则科目下拉选择
   const flat = useMemo(() => {
     if (!cata) return null
     const entries = Object.entries(cata)
@@ -120,7 +150,7 @@ function useBookCatalog(book: Book, tikuIdx: Map<string, number>) {
   return { idx, cata, setCata, failed, subjects, flat, bookProg }
 }
 
-/** 一本书（窄屏）：Card + ToggleGroup 科目 chips + Item 章节列表 */
+/** 一本书（窄屏）：Card + 科目下拉 + Item 章节列表 */
 function BookCard({
   book,
   tikuIdx,
@@ -191,20 +221,7 @@ function BookCard({
 
         {cata && !flat && (
           <>
-            <ToggleGroup
-              type="single"
-              variant="outline"
-              className="flex-wrap"
-              value={openSubj}
-              onValueChange={(v) => setOpenSubj(v ?? '')}
-            >
-              {subjects.map(([subj, chapters]) => (
-                <ToggleGroupItem key={subj} value={subj} onMouseEnter={() => prefetchChapter(chapters[0]?.id)}>
-                  {subj}
-                  <Badge variant="secondary" className="ml-1 tabular-nums">{chapters.length}</Badge>
-                </ToggleGroupItem>
-              ))}
-            </ToggleGroup>
+            <SubjectSelect subjects={subjects} value={openSubj} onChange={setOpenSubj} className="w-full" />
             {openSubj && cata[openSubj] && (
               <ChapterList
                 chapters={filterCh(cata[openSubj])}
@@ -427,35 +444,22 @@ function WideBookPanel({
             <Skeleton className="h-9 w-4/5 rounded-lg" />
           </div>
         )}
-        <div className="flex flex-wrap items-center gap-3">
-          {cata && !flat && (
-            <ToggleGroup
-              type="single"
-              variant="outline"
-              className="flex-wrap"
-              value={openSubj}
-              onValueChange={(v) => setOpenSubj(v ?? '')}
-            >
-              {subjects.map(([subj, chapters]) => (
-                <ToggleGroupItem key={subj} value={subj} onMouseEnter={() => prefetchChapter(chapters[0]?.id)}>
-                  {subj}
-                  <Badge variant="secondary" className="ml-1 tabular-nums">{chapters.length}</Badge>
-                </ToggleGroupItem>
-              ))}
-            </ToggleGroup>
-          )}
-          {cata && ((flat && flat.length > 12) || (openSubj && (cata[openSubj]?.length ?? 0) > 12)) && (
-            <div className={flat ? 'relative w-56 shrink-0' : 'relative ml-auto w-56 shrink-0'}>
-              <MagnifyingGlassIcon className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                value={chapQuery}
-                onChange={(e) => setChapQuery(e.target.value)}
-                placeholder="搜本册章节…"
-                className="h-9 rounded-lg pl-9"
-              />
-            </div>
-          )}
-        </div>
+        {cata && (
+          <div className="flex flex-wrap items-center gap-3">
+            {!flat && <SubjectSelect subjects={subjects} value={openSubj} onChange={setOpenSubj} className="w-full sm:w-80" />}
+            {((flat && flat.length > 12) || (openSubj && (cata[openSubj]?.length ?? 0) > 12)) && (
+              <div className={flat ? 'relative w-56 shrink-0' : 'relative ml-auto w-56 shrink-0'}>
+                <MagnifyingGlassIcon className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  value={chapQuery}
+                  onChange={(e) => setChapQuery(e.target.value)}
+                  placeholder="搜本册章节…"
+                  className="h-9 rounded-lg pl-9"
+                />
+              </div>
+            )}
+          </div>
+        )}
         {cata && flat && (
           <ChapterList cols chapters={filterCh(flat)} onPick={(i) => { const f = filterCh(flat); pickFrom(f.map((x) => x.id), i) }} />
         )}
@@ -467,7 +471,7 @@ function WideBookPanel({
           />
         )}
         {cata && !flat && !openSubj && (
-          <p className="px-1 py-6 text-sm text-muted-foreground">先选一个科目，下面会展开它的章节。</p>
+          <p className="px-1 py-6 text-sm text-muted-foreground">在上方下拉框选一个科目，下面会展开它的章节。</p>
         )}
       </div>
     </section>
